@@ -1,1 +1,4 @@
 簡易回答システム/
+*.user
+Solver/UI/obj/
+Solver/UI/bin/
