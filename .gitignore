@@ -2,3 +2,5 @@
 *.user
 Solver/UI/obj/
 Solver/UI/bin/
+
+*/.vs
