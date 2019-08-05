@@ -1,0 +1,10 @@
+*./Procon30_search
+*./v16
+*.user
+*.filters
+*.vcxproj
+*.suo
+*.db
+*.opendb
+*.ipch
+*.sln
