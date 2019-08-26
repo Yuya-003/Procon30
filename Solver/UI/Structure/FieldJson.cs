@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System.IO;
 
-namespace Structure
+namespace UI.Structure
 {
     public class FieldJson
     {
@@ -72,6 +73,22 @@ namespace Structure
 
         [JsonProperty("actions")]
         public Action[] Actions { get; set; }
+
+
+
+        public static FieldJson LoadFromJsonFile(string FileName)
+        {
+            var field = new FieldJson();
+            using (var sr = new StreamReader(FileName))
+            {
+                string JsonStr = sr.ReadToEnd();
+                field = JsonConvert.DeserializeObject<FieldJson>(JsonStr);
+            }
+
+            return field;
+        }
+
+        public new string ToString => JsonConvert.SerializeObject(this, Formatting.Indented);
     }
 }
 

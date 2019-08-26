@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System.IO;
 
-namespace Structure
+namespace UI.Structure
 {
     public class ActionJson
     {
@@ -15,5 +16,21 @@ namespace Structure
 
         [JsonProperty("dy")]
         public int Dy { get; set; }
+
+
+        public static ActionJson LoadFromJsonFile(string FileName)
+        {
+            var action = new ActionJson();
+            using (var sr = new StreamReader(FileName))
+            {
+                string JsonStr = sr.ReadToEnd();
+                action = JsonConvert.DeserializeObject<ActionJson>(JsonStr);
+            }
+            
+            return action;
+        }
+
+        public new string ToString => JsonConvert.SerializeObject(this, Formatting.Indented);
     }
+
 }
