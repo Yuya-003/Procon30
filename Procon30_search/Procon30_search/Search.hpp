@@ -16,7 +16,6 @@ public:
 
 	class Node {
 	public:
-
 		enum Status {
 			none, open, closed
 		};
@@ -28,16 +27,22 @@ public:
 		int hCost; //ヒューリスティクスコスト = 目的地までの距離
 		int score; //スコア = h_cost + cost - Cellのpoint
 		Node* parent; //親ノード
+
+		//ヒューリスティクスコストを計算
+		void CalculateH(Position goal) {
+			hCost = sqrt(pow(goal.x - pos.x, 2) + pow(goal.y - pos.y, 2));
+		}
+		//スコアを計算
+		void CalculateScore() {
+			score = hCost + cost - cell.point;
+		}
 	};
 
-	int searchLimit = 3;
-	int borderScore = 10;
+	const int searchLimit = 3;
+	const int borderScore = 10;
+	const int dir = 8;
 
 	BasicSearch();
 
 	virtual std::vector<Behaviour> Search(FieldInfo field);
-
-private:
-	int CalculateH(Position goal, Position player);	//ヒューリスティクスコストを計算
-	int CalculateScore(Node node);
 };

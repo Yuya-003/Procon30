@@ -1,87 +1,132 @@
 #include "Search.hpp"
 
-BasicSearch::BasicSearch(){
+BasicSearch::BasicSearch() {
 }
 
-std::vector<Behaviour> BasicSearch::Search(FieldInfo field){
+std::vector<Behaviour> BasicSearch::Search(FieldInfo field) {
+	int dx[8] = { 1,1,0,-1,-1,-1,0,1 };
+	int dy[8] = { 0,1,1,1,0,-1,-1,-1 };
 	std::vector<std::vector<Node>> map(field.Height(), std::vector<Node>(field.Width(), Node()));
+	std::vector<std::vector<int>> dirMap(field.Height(), std::vector<int>(field.Width(), 0));
+	std::vector<std::vector<int>> openList(field.Height(), std::vector<int>(field.Width(), 0));
+	std::vector<std::vector<int>> closedList(field.Height(), std::vector<int>(field.Width(), 0));
+	std::vector<Behaviour> behaviour;
+	std::priority_queue<Node> nodes[2];
+	int index = 0;
 
-	std::vector<Node> nodes;
 	for (int k = 0; k <= field.allies.size(); k++) {
-		//目的地の設定
+		//目的地を計算
 		Node goal;
 		goal.cell.point = 1e-6;
 		for (int i = 0; i < field.Height(); i++) {
 			for (int j = 0; j < field.Width(); j++) {
-				//ノードの初期化
+				//マップを初期化
 				map[i][j].cell = field.field[i][j];
 				map[i][j].status = Node::Status::none;
 				map[i][j].pos = Position(j, i);
-				//どちらのチームのものでもなく、10点以上のタイルで、最も左下側のものを目的地とする
+				//占領されていない、最も点数の高いタイルを目的地とする
 				if (map[i][j].cell.status == Cell::none && map[i][j].cell.point >= borderScore) {
 					goal = map[i][j];
 				}
 			}
 		}
 
-		Position startPos = Position(field.allies[k].x,field.allies[k].y);	//スタート地点を保存
-		Position playerPos = startPos;	//現在位置を保存
+		behaviour[k].action = Behaviour::Action::stay;
+		behaviour[k].dir = Behaviour::Dir::none;
 
-		//スタート地点をopenに
+		Position startPos = Position(field.allies[k].x, field.allies[k].y);	//初期位置を保存
+
+		//初期位置の情報を修正
 		map[startPos.y][startPos.x].parent = nullptr;
 		map[startPos.y][startPos.x].status = Node::Status::open;
-		map[startPos.y][startPos.x].cost = 0;	//実コストを0に
-		map[startPos.y][startPos.x].hCost = CalculateH(goal.pos, startPos);	//ヒューリスティクスコストを計算
-		map[startPos.y][startPos.x].score = CalculateScore(map[startPos.y][startPos.x]);	//スコアを計算
+		map[startPos.y][startPos.x].cost = 0;
+		map[startPos.y][startPos.x].CalculateH(goal.pos);
+		map[startPos.y][startPos.x].CalculateScore();
 
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dy = -1; dy <= 1; dy++) {
-				Position n = Position(playerPos.x + dx, playerPos.y + dy);
+				Position n = Position(startPos.x + dx, startPos.y + dy);
 				if (map[n.y][n.x].status == Node::Status::none && map[n.y][n.x].cell.point > 1e-6) {
-					map[n.y][n.x].parent = &map[playerPos.y][playerPos.x];
+					map[n.y][n.x].parent = &map[startPos.y][startPos.x];
 					map[n.y][n.x].status = Node::Status::open;
-					map[n.y][n.x].cost = map[playerPos.y][playerPos.x].cost + 1;
-					map[n.y][n.x].hCost = CalculateH(goal.pos, n);
-					map[n.y][n.x].score = CalculateScore(map[n.y][n.x]);
+					map[n.y][n.x].cost = map[startPos.y][startPos.x].cost + 1;
+					map[n.y][n.x].CalculateH(goal.pos);
+					map[n.y][n.x].CalculateScore();
 				}
 			}
 		}
 
-		/*
-		nodes.push_back(map[playerPos.y][playerPos.x]);	//ノードの末尾に追加
-		while (!nodes.empty()) {
-			Node node = nodes[0];
-			for (int i = 1; i < nodes.size(); i++) {
-				if (node.score < nodes[i].score) {	//ノードの先頭のスコアと以降のスコアを比較→最大値を求める
-					node = nodes[i];
+		nodes[index].push(map[startPos.y][startPos.x]);
+		while (!nodes[index].empty()) {
+			Node node = nodes[index].top();
+			for (int i = 1; i < nodes[index].size(); i++) {
+				if (node.score < nodes[i].top().score) {
+					node = nodes[i].top();
 				}
 			}
 
-			//以下にいろいろ追加
+			double x = node.pos.x;
+			double y = node.pos.y;
 
+			nodes[index].pop();
+
+			openList[x][y] = 0;
+			closedList[x][y] = 1;
+
+			if (x == goal.pos.x && y == goal.pos.y) {
+				std::string path = "";
+				while (!(x == startPos.x && y == startPos.y)) {
+					int j = dirMap[x][y];
+					char c = '0' + (j + dir / 2) % 2;
+					path += c;
+					x += dx[j];
+					y += dy[j];
+				}
+
+				while (!nodes[index].empty()) nodes[index].pop();
+				//return path;
+			}
+
+			for (int i = 0; i < dir; i++) {
+				int xdx = x + dx[i];
+				int ydy = y + dy[i];
+
+				if (!(xdx<0 || xdx>field.Height() - 1 || ydy<0 || ydy>field.Width() - 1 || map[xdx][ydy].cell.status == Cell::Status::enemy || closedList[xdx][ydy] == 1)) {
+					Node m0;
+					m0.pos = Position(xdx, ydy);
+					m0.cost = node.cost;
+					m0.score = node.score;
+					m0.CalculateScore();
+					m0.CalculateH(goal.pos);
+
+					if (openList[xdx][ydy] == 0) {
+						openList[xdx][ydy] = m0.score;
+						nodes[index].push(m0);
+						dirMap[xdx][ydy] = (i + dir / 2) % dir;
+					}
+					else if (openList[xdx][ydy] > m0.score) {
+						openList[xdx][ydy] = m0.score;
+						dirMap[xdx][ydy] = (i + dir / 2) % dir;
+
+						while (!(nodes[index].top().pos.x == xdx && nodes[index].top().pos.y == ydy)) {
+							nodes[1 - index].push(nodes[index].top());
+							nodes[index].pop();
+						}
+						nodes[index].pop();
+
+						if (nodes[index].size() > nodes[1 - index].size()) index = 1 - index;
+						while (!nodes[index].empty()) {
+							nodes[1 - index].push(nodes[index].top());
+							nodes[index].pop();
+						}
+						index = 1 - index;
+						nodes[index].push(m0);
+					}
+				}
+			}
 		}
-		*/
 	}
 
-	//探索結果をまとめてリターン
-	std::vector<Behaviour> behaviour;
-	behaviour[0].action = Behaviour::Action::stay;
-	behaviour[0].dir = Behaviour::Dir::none;
-	behaviour[1].action = Behaviour::Action::stay;
-	behaviour[1].dir = Behaviour::Dir::none;
+	//結果をリターン
 	return behaviour;
-}
-
-//ヒューリスティクスコストを計算
-int BasicSearch::CalculateH(Position goal, Position player) {
-	int dx = goal.x - player.x;
-	int dy = goal.y - player.y;
-
-	if (dx >= dy) { return dx; }
-	else { return dy; }
-}
-
-//スコアを計算
-int BasicSearch::CalculateScore(Node node){
-	return node.hCost + node.cost - node.cell.point;
 }
