@@ -8,3 +8,5 @@
 *.opendb
 *.ipch
 *.sln
+*Debug
+*./Debug
