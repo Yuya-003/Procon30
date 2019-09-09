@@ -3,16 +3,17 @@
 BasicSearch::BasicSearch() {
 }
 
-std::vector<Behaviour> BasicSearch::Search(FieldInfo field) {
+std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 	int dx[8] = { 1,1,0,-1,-1,-1,0,1 };
 	int dy[8] = { 0,1,1,1,0,-1,-1,-1 };
 	std::vector<std::vector<Node>> map(field.Height(), std::vector<Node>(field.Width(), Node()));
 	std::vector<std::vector<int>> dirMap(field.Height(), std::vector<int>(field.Width(), 0));
 	std::vector<std::vector<int>> openList(field.Height(), std::vector<int>(field.Width(), 0));
 	std::vector<std::vector<int>> closedList(field.Height(), std::vector<int>(field.Width(), 0));
-	std::vector<Behaviour> behaviour;
+	std::vector<std::vector<Behaviour>> behaviour(field.allies.size(), std::vector<Behaviour>(3, Behaviour()));
 	std::priority_queue<Node> nodes[2];
 	int index = 0;
+	int moveCount = 0;
 
 	for (int k = 0; k <= field.allies.size(); k++) {
 		//目的地を計算
@@ -30,9 +31,6 @@ std::vector<Behaviour> BasicSearch::Search(FieldInfo field) {
 				}
 			}
 		}
-
-		behaviour[k].action = Behaviour::Action::stay;
-		behaviour[k].dir = Behaviour::Dir::none;
 
 		Position startPos = Position(field.allies[k].x, field.allies[k].y);	//初期位置を保存
 
@@ -74,17 +72,21 @@ std::vector<Behaviour> BasicSearch::Search(FieldInfo field) {
 			closedList[x][y] = 1;
 
 			if (x == goal.pos.x && y == goal.pos.y) {
-				std::string path = "";
-				while (!(x == startPos.x && y == startPos.y)) {
+				int i = 0;
+				while (!dirMap.empty()) {
 					int j = dirMap[x][y];
-					char c = '0' + (j + dir / 2) % 2;
-					path += c;
+					char c = '0' + (10 - (j + dir / 2) % 2);
+					
+					behaviour[k][i].action = Behaviour::Action::move;
+					behaviour[k][i].dir = static_cast<Behaviour::Dir>(10 - (dirMap[x][y] + dir / 2) % 2);
+
 					x += dx[j];
 					y += dy[j];
+					i++;
 				}
 
 				while (!nodes[index].empty()) nodes[index].pop();
-				//return path;
+				break;
 			}
 
 			for (int i = 0; i < dir; i++) {
@@ -103,6 +105,7 @@ std::vector<Behaviour> BasicSearch::Search(FieldInfo field) {
 						openList[xdx][ydy] = m0.score;
 						nodes[index].push(m0);
 						dirMap[xdx][ydy] = (i + dir / 2) % dir;
+						moveCount++;
 					}
 					else if (openList[xdx][ydy] > m0.score) {
 						openList[xdx][ydy] = m0.score;
@@ -121,7 +124,10 @@ std::vector<Behaviour> BasicSearch::Search(FieldInfo field) {
 						}
 						index = 1 - index;
 						nodes[index].push(m0);
+						moveCount++;
 					}
+
+					if (moveCount == 3) { break; }
 				}
 			}
 		}

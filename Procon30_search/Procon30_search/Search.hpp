@@ -44,5 +44,5 @@ public:
 
 	BasicSearch();
 
-	virtual std::vector<Behaviour> Search(FieldInfo field);
+	virtual std::vector<std::vector<Behaviour>> Search(FieldInfo field);
 };
