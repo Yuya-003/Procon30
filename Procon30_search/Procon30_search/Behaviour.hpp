@@ -2,19 +2,16 @@
 
 class Behaviour {
 public:
-	enum Action {
+	enum class Action {
 		move, remove, stay
 	};
 
-	enum Dir {
+	enum class Dir {
 		upLeft = 1, up, upRight, left, none, right, downLeft, down, downRight
 	};
 
 	Action action;
 	Dir dir;
 
-	Behaviour(Action a = Action::stay, Dir d = Dir::none) {
-		action = a;
-		dir = d;
-	}
+	Behaviour(Action a = Action::stay, Dir d = Dir::none) :action(a), dir(d) {}
 };

@@ -1,8 +1,8 @@
 #include "Search.hpp"
 #include <fstream>
-#include <sstream>>
+#include <sstream>
 
-void main() {
+int main() {
 	std::string str;
 
 	//探索結果があるか確認
@@ -12,21 +12,29 @@ void main() {
 	if (str == "none") {
 		BasicSearch bs;
 		FieldInfo fi;
+		std::string text, field;
 
 		//盤面データ受け取り
 		std::fstream fieldData("./field.txt", std::ios::in | std::ios::out);
-		fieldData >> str;
+		fieldData >> text;
 
 		//FieldInfoに変換
+		while (std::getline(std::istringstream(text),field, '\n')) {
+			while (std::getline(std::istringstream(field), text, ' ')) {
+
+			}
+		}
 
 		//探索
 		std::vector<std::vector<Behaviour>> result = bs.Search(fi);
 
 		//探索結果を出力 → ID:行動:方向
 		for (int i = 0; i < fi.allies.size(); i++) {
-			fieldData << fi.allies[i].id << " : " << result[i][0].action;
+			int temp = static_cast<int>(result[i][0].action);
+			fieldData << fi.allies[i].id << " : " << temp;
 			if (result[i][0].action != Behaviour::Action::stay) {
-				resultData << " : " << result[i][0].dir;
+				temp = static_cast<int>(result[i][0].dir);
+				resultData << " : " << temp;
 			}
 			resultData << std::endl;
 		}
@@ -35,9 +43,11 @@ void main() {
 		for (int i = 1; i < result[i].size(); i++) {
 			resultData << "[" << i << "]" << std::endl;
 			for (int j = 0; i < fi.allies.size(); j++) {
-				resultData << fi.allies[j].id << ":" << result[j][i].action << ":";
+				int temp = static_cast<int>(result[j][i].action);
+				resultData << fi.allies[j].id << ":" << temp << ":";
 				if (result[j][i].action != Behaviour::Action::stay) {
-					resultData << result[j][i].dir;
+					temp = static_cast<int>(result[j][i].dir);
+					resultData << temp;
 				}
 				resultData << std::endl;
 			}

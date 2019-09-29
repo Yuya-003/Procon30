@@ -3,6 +3,11 @@
 BasicSearch::BasicSearch() {
 }
 
+//<æ¼”ç®—å­ã®ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰(priority_queueã§ä½¿ç”¨)
+bool operator<(const BasicSearch::Node& a, const BasicSearch::Node& b) {
+	return a.score > b.score;
+}
+
 std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 	int dx[8] = { 1,1,0,-1,-1,-1,0,1 };
 	int dy[8] = { 0,1,1,1,0,-1,-1,-1 };
@@ -15,27 +20,26 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 	int index = 0;
 	int moveCount = 0;
 
-	for (int k = 0; k <= field.allies.size(); k++) {
-		//–Ú“I’n‚ğŒvZ
+	for (std::size_t k = 0; k <= field.allies.size(); k++) {
+		//ç›®çš„åœ°ã‚’è¨ˆç®—
 		Node goal;
-		goal.cell.point = 1e-6;
-		for (int i = 0; i < field.Height(); i++) {
-			for (int j = 0; j < field.Width(); j++) {
-				//ƒ}ƒbƒv‚ğ‰Šú‰»
+		goal.cell.point = (int)1e-6;
+		for (std::size_t i = 0; i < field.Height(); i++) {
+			for (std::size_t j = 0; j < field.Width(); j++) {
+				//ãƒãƒƒãƒ—ã‚’åˆæœŸåŒ–
 				map[i][j].cell = field.field[i][j];
 				map[i][j].status = Node::Status::none;
 				map[i][j].pos = Position(j, i);
-				//è—Ì‚³‚ê‚Ä‚¢‚È‚¢AÅ‚à“_”‚Ì‚‚¢ƒ^ƒCƒ‹‚ğ–Ú“I’n‚Æ‚·‚é
+				//å é ˜ã•ã‚Œã¦ã„ãªã„ã€æœ€ã‚‚ç‚¹æ•°ã®é«˜ã„ã‚¿ã‚¤ãƒ«ã‚’ç›®çš„åœ°ã¨ã™ã‚‹
 				if (map[i][j].cell.status == Cell::none && map[i][j].cell.point >= borderScore) {
 					goal = map[i][j];
 				}
 			}
 		}
 
-		Position startPos = Position(field.allies[k].x, field.allies[k].y);	//‰ŠúˆÊ’u‚ğ•Û‘¶
+		Position startPos = Position(field.allies[k].x, field.allies[k].y);	//åˆæœŸä½ç½®ã‚’ä¿å­˜
 
-		//‰ŠúˆÊ’u‚Ìî•ñ‚ğC³
-		map[startPos.y][startPos.x].parent = nullptr;
+		//åˆæœŸä½ç½®ã®æƒ…å ±ã‚’ä¿®æ­£
 		map[startPos.y][startPos.x].status = Node::Status::open;
 		map[startPos.y][startPos.x].cost = 0;
 		map[startPos.y][startPos.x].CalculateH(goal.pos);
@@ -45,7 +49,6 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 			for (int dy = -1; dy <= 1; dy++) {
 				Position n = Position(startPos.x + dx, startPos.y + dy);
 				if (map[n.y][n.x].status == Node::Status::none && map[n.y][n.x].cell.point > 1e-6) {
-					map[n.y][n.x].parent = &map[startPos.y][startPos.x];
 					map[n.y][n.x].status = Node::Status::open;
 					map[n.y][n.x].cost = map[startPos.y][startPos.x].cost + 1;
 					map[n.y][n.x].CalculateH(goal.pos);
@@ -57,14 +60,16 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 		nodes[index].push(map[startPos.y][startPos.x]);
 		while (!nodes[index].empty()) {
 			Node node = nodes[index].top();
-			for (int i = 1; i < nodes[index].size(); i++) {
-				if (node.score < nodes[i].top().score) {
+			std::size_t nodesSize = nodes[index].size();
+			for (std::size_t i = 1; i < nodesSize; i++) {
+				int topScore = nodes[i].top().score;
+				if (node.score < topScore) {
 					node = nodes[i].top();
 				}
 			}
 
-			double x = node.pos.x;
-			double y = node.pos.y;
+			int x = node.pos.x;
+			int y = node.pos.y;
 
 			nodes[index].pop();
 
@@ -90,10 +95,10 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 			}
 
 			for (int i = 0; i < dir; i++) {
-				int xdx = x + dx[i];
-				int ydy = y + dy[i];
+				std::size_t xdx = x + dx[i];
+				std::size_t ydy = y + dy[i];
 
-				if (!(xdx<0 || xdx>field.Height() - 1 || ydy<0 || ydy>field.Width() - 1 || map[xdx][ydy].cell.status == Cell::Status::enemy || closedList[xdx][ydy] == 1)) {
+				if (!(xdx < 0 || xdx > field.Height() - 1 || ydy < 0 || ydy > field.Width() - 1 || map[xdx][ydy].cell.status == Cell::Status::enemy || closedList[xdx][ydy] == 1)) {
 					Node m0;
 					m0.pos = Position(xdx, ydy);
 					m0.cost = node.cost;
@@ -133,6 +138,6 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 		}
 	}
 
-	//Œ‹‰Ê‚ğƒŠƒ^[ƒ“
+	//çµæœã‚’ãƒªã‚¿ãƒ¼ãƒ³
 	return behaviour;
 }

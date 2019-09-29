@@ -10,6 +10,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
+#include <queue>
 
 class BasicSearch {
 public:
@@ -25,12 +27,11 @@ public:
 		Cell cell;
 		int cost; //実コスト = 今までかかったコスト
 		int hCost; //ヒューリスティクスコスト = 目的地までの距離
-		int score; //スコア = h_cost + cost - Cellのpoint
-		Node* parent; //親ノード
+		int score; //スコア = hCost + cost -Cell.point
 
 		//ヒューリスティクスコストを計算
 		void CalculateH(Position goal) {
-			hCost = sqrt(pow(goal.x - pos.x, 2) + pow(goal.y - pos.y, 2));
+			hCost = (int)sqrt(pow(goal.x - pos.x, 2) + pow(goal.y - pos.y, 2));
 		}
 		//スコアを計算
 		void CalculateScore() {
@@ -38,9 +39,8 @@ public:
 		}
 	};
 
-	const int searchLimit = 3;
-	const int borderScore = 10;
-	const int dir = 8;
+	int borderScore = 10;
+	int dir = 8;
 
 	BasicSearch();
 
