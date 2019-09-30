@@ -46,15 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="procon30GUI.cs">
+    <Compile Include="procon30UI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="procon30GUI.Designer.cs">
+    <Compile Include="procon30UI.Designer.cs">
       <DependentUpon>procon30UI.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="procon30GUI.resx">
+    <EmbeddedResource Include="procon30UI.resx">
       <DependentUpon>procon30UI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
