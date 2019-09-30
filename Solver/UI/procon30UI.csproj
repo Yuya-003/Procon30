@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B354E7CA-547D-4C1C-8D0B-7AE3F6EE76A2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>procon30GUI</RootNamespace>
-    <AssemblyName>procon30GUI</AssemblyName>
+    <RootNamespace>procon30UI</RootNamespace>
+    <AssemblyName>procon30UI</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -50,12 +50,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="procon30GUI.Designer.cs">
-      <DependentUpon>procon30GUI.cs</DependentUpon>
+      <DependentUpon>procon30UI.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="procon30GUI.resx">
-      <DependentUpon>procon30GUI.cs</DependentUpon>
+      <DependentUpon>procon30UI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

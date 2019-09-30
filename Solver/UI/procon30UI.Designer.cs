@@ -1,4 +1,4 @@
-﻿namespace procon30GUI
+﻿namespace procon30UI
 {
     partial class Form1
     {

@@ -11,12 +11,11 @@ using System.Windows.Forms;
 using System.IO;
 using System.Timers;
 
-namespace procon30GUI
+namespace procon30UI
 {
     public partial class Form1 : Form
     {
         /*受け取り可能な情報
-
         フィールド情報
         ・ width:integer(フィールド横幅)
         ・ height:integer(フィールド縦幅)
@@ -24,7 +23,6 @@ namespace procon30GUI
         ・ startedAtUnixTime:integer(試合が始まった Unix 時間)
         ・ turn:integer(ターン)
         ・ tiled:integer 二次元配列(タイル配置状況)
-
         ・ teams:オブジェクト配列(各チーム状況)
             ・ teamID:integer(チーム ID)
             ・ agents:オブジェクト配列,(各エージェント状況)
@@ -33,7 +31,6 @@ namespace procon30GUI
                 ・y:integer(y座標)
             ・ tilePoint:integer(タイルポイント)
             ・ areaPoint:integer(領域ポイント)
-
         ・ actions:オブジェクト配列(各行動履歴)
             ・ agentID:integer(エージェント ID)
             ・ type:string(行動の種類,“move”:移動, “remove”:除去, “stay”:停留)
@@ -41,14 +38,11 @@ namespace procon30GUI
             ・ dy:integer(行動のy方向の向き,-1:上,0:中,1:下)
             ・ turn:integer(行動ターン)
             ・ apply:integer(行動の適応状況,-1:無効,0:競合,1:有効)
-
         ・ actions:オブジェクト配列(各エージェントの行動)
             ・ agentID:integer(エージェント ID)
             ・ type:string(行動の種類,“move”:移動, “remove”:除去, “stay”:停留)
             ・ dx:integer(行動のx方向の向き,-1:左,0:中,1:右)
             ・ dy:integer(行動のy方向の向き,-1:上,0:中,1:下)
-
-
             事前所法取得API内容
             ・試合のID
             ・対戦相手の名前
@@ -122,10 +116,8 @@ namespace procon30GUI
             int totalTurn = 10;//試合ごとに変わるその試合の総ターン
             //int oneTurnInterval 試合の1ターンあたりの時間(ms) つかわんくねこれ？
             int turnInterval = 10;//試合のターンとターンの間の時間(ms)
-
             public API()
             {
-
             }
         }
         */
@@ -141,7 +133,7 @@ namespace procon30GUI
 
             public Actions()
             {
-                
+
             }
 
 
@@ -343,8 +335,6 @@ namespace procon30GUI
 
             /*int[] agent;
             agent = new int[agentOfenemies];
-
-
              public static void highestScore()
              {
                  if()
@@ -362,11 +352,8 @@ namespace procon30GUI
                                        mawari[0] = points[i-1,j-1]; mawari[1] = points[i-1,j]; mawari[2] = points[i-1,j+1];
                                        mawari[3] = points[i,j-1];                               mawari[4] = points[i,j+1];
                                        mawari[5] = points[i+1,j-1]; mawari[6] = points[i+1,j]; mawari[7] = points[i+1,j+1];
-
                                        Array.Sort(mawari);
-
                                    //mawari[8]; //これが一番大きい
-
                                    }
                                }
                            }
