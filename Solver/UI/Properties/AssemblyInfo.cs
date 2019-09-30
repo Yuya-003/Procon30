@@ -3,13 +3,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
-// 制御されます。アセンブリに関連付けられている情報を変更するには、
-// これらの属性値を変更します。
-[assembly: AssemblyTitle("UI")]
+// アセンブリに関連付けられている情報を変更するには、
+// これらの属性値を変更してください。
+[assembly: AssemblyTitle("procon30GUI")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("UI")]
+[assembly: AssemblyProduct("procon30GUI")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,14 +20,14 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // このプロジェクトが COM に公開される場合、次の GUID が typelib の ID になります
-[assembly: Guid("0f21de79-86b5-4993-a735-125703dd6c3b")]
+[assembly: Guid("b354e7ca-547d-4c1c-8d0b-7ae3f6ee76a2")]
 
-// アセンブリのバージョン情報は、以下の 4 つの値で構成されています:
+// アセンブリのバージョン情報は次の 4 つの値で構成されています:
 //
 //      メジャー バージョン
 //      マイナー バージョン
 //      ビルド番号
-//      リビジョン
+//      Revision
 //
 // すべての値を指定するか、次を使用してビルド番号とリビジョン番号を既定に設定できます
 // 既定値にすることができます:
