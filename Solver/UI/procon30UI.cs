@@ -359,6 +359,10 @@ namespace procon30UI
                            }
                        }
                  }
+
+            周りが自分のタイルか否か？
+            ↓
+            周りで最も点数が高いものはどれか？
              }*/
 
         }
@@ -366,9 +370,22 @@ namespace procon30UI
         private void button1_Click(object sender, EventArgs e)
         {
             //unixtimeのタイマースタート
-            //
             turn += 1;
             time = 0;
+
+            //探索の開始
+            System.Diagnostics.Process p = System.Diagnostics.Process.Start("notepad.exe");//探索.exe
+            /*
+            while()//探索の終了待ち
+            {
+                if()//時間のチェック過ぎれば周りで最もポイントの高い方へ
+                {
+                    
+                }
+                    
+            }
+            */
+
         }
 
         private void tickTimer(object sender, EventArgs e)
