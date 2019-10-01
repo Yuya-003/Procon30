@@ -19,15 +19,9 @@ int main() {
 
 		//盤面データ受け取り
 		std::fstream fieldData("./field.txt", std::ios::in | std::ios::out);
-		fieldData >> text;
 
-		//FieldInfoに変換
 		//文字を分割
-		std::vector<std::string> temp = SplitLine(text, '\n');
-		for (size_t i = 0; i < temp.size(); i++) {
-			splited.push_back(SplitLine(temp[i], ','));
-
-		}
+		while (fieldData >> text) { splited.push_back(SplitLine(text, ',')); }
 
 		//文字を数値に変換
 		for (size_t i = 0; i < splited.size(); i++) {
