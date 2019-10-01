@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 
+std::vector<std::string> SplitLine(const std::string&, char);
+
 int main() {
 	std::string str;
 
@@ -11,18 +13,53 @@ int main() {
 
 	if (str == "none") {
 		BasicSearch bs;
-		FieldInfo fi;
-		std::string text, field;
+		std::string text;
+		std::vector<std::vector<std::string>> splited;
+		std::vector<std::vector<int>> field;
 
 		//盤面データ受け取り
 		std::fstream fieldData("./field.txt", std::ios::in | std::ios::out);
 		fieldData >> text;
 
 		//FieldInfoに変換
-		while (std::getline(std::istringstream(text),field, '\n')) {
-			while (std::getline(std::istringstream(field), text, ' ')) {
+		//文字を分割
+		std::vector<std::string> temp = SplitLine(text, '\n');
+		for (size_t i = 0; i < temp.size(); i++) {
+			splited.push_back(SplitLine(temp[i], ','));
 
+		}
+
+		//文字を数値に変換
+		for (size_t i = 0; i < splited.size(); i++) {
+			std::vector<int> line;
+			for (size_t j = 0; j < splited[i].size(); j++) {
+				line.push_back(std::stoi(splited[i][j]));
 			}
+			field.push_back(line);
+		}
+
+		//盤面のサイズを初期化
+		size_t x = field[0][0], y = field[0][1];
+		FieldInfo fi(x, y);
+
+		//ポイントと状態を初期化
+		size_t i, j;
+		for (i = 0; i < y; i++) {
+			for (j = 0; j < x; j++) {
+				fi.field[i][j].point = field[i + 1][j];
+				fi.field[i][j].status = Cell::none;
+			}
+		}
+
+		//エージェントの位置とIDを初期化
+		while (i < field.size()) {
+			Player pl;
+			pl.id = field[i][0];
+			pl.x = field[i][1] - 1;
+			pl.y = field[i][2] - 1;
+			fi.allies.push_back(pl);
+
+			i++;
 		}
 
 		//探索
@@ -55,10 +92,9 @@ int main() {
 	}
 	else {
 		//保存された探索結果を分離
-		std::istringstream stream(str);
 		std::string field;
 		std::vector<std::string> result;
-		while (std::getline(stream, field, '\n')) {
+		while (std::getline(std::istringstream(str), field, '\n')) {
 			result.push_back(field);
 		}
 
@@ -77,4 +113,17 @@ int main() {
 			if (i == result.size() - 1) { resultData << "none"; }
 		}
 	}
+}
+
+std::vector<std::string> SplitLine(const std::string& str, char delim)
+{
+	std::vector<std::string> splited;
+	std::stringstream ss(str);
+	std::string buf;
+
+	while (std::getline(ss, buf, delim)) {
+		splited.push_back(buf);
+	}
+
+	return splited;
 }

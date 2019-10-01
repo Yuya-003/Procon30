@@ -30,11 +30,11 @@ public:
 		int score; //スコア = hCost + cost -Cell.point
 
 		//ヒューリスティクスコストを計算
-		void CalculateH(Position goal) {
+		inline void CalculateH(Position goal) {
 			hCost = (int)sqrt(pow(goal.x - pos.x, 2) + pow(goal.y - pos.y, 2));
 		}
 		//スコアを計算
-		void CalculateScore() {
+		inline void CalculateScore() {
 			score = hCost + cost - cell.point;
 		}
 	};

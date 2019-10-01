@@ -4,7 +4,7 @@ BasicSearch::BasicSearch() {
 }
 
 //<演算子のオーバーロード(priority_queueで使用)
-bool operator<(const BasicSearch::Node& a, const BasicSearch::Node& b) {
+inline bool operator<(const BasicSearch::Node& a, const BasicSearch::Node& b) {
 	return a.score > b.score;
 }
 
