@@ -102,7 +102,7 @@ int main() {
 
 			field = result[i][0] + ":" + result[i][1];
 			if (result[i][1] != "stay") {
-				field += (" : " + result[i][j]);
+				field += (" : " + result[i][2]);
 			}
 			field += "\n";
 			fieldOfs << field;
@@ -116,7 +116,7 @@ int main() {
 			while (++i && i < result.size()) {
 				field = result[i][0] + ":" + result[i][1];
 				if (result[i][1] != "stay") {
-					field += (" : " + result[i][j]);
+					field += (" : " + result[i][2]);
 				}
 				field += "\n";
 				resultOfs << field;
