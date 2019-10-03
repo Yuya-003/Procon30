@@ -20,7 +20,7 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 	int index = 0;
 	int moveCount = 0;
 
-	for (std::size_t k = 0; k <= field.allies.size(); k++) {
+	for (std::size_t k = 2; k < field.allies.size(); k++) {
 		//目的地を計算
 		Node goal;
 		goal.cell.point = (int)1e-6;
@@ -44,30 +44,25 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 		map[startPos.y][startPos.x].cost = 0;
 		map[startPos.y][startPos.x].CalculateH(goal.pos);
 		map[startPos.y][startPos.x].CalculateScore();
-
+		
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dy = -1; dy <= 1; dy++) {
 				Position n = Position(startPos.x + dx, startPos.y + dy);
-				if (map[n.y][n.x].status == Node::Status::none && map[n.y][n.x].cell.point > 1e-6) {
-					map[n.y][n.x].status = Node::Status::open;
-					map[n.y][n.x].cost = map[startPos.y][startPos.x].cost + 1;
-					map[n.y][n.x].CalculateH(goal.pos);
-					map[n.y][n.x].CalculateScore();
+				if (n.x >= 0 && n.x < field.Width() && n.y >= 0 && n.y < field.Height()) {
+					if (map[n.y][n.x].status == Node::Status::none && map[n.y][n.x].cell.point > 1e-6) {
+						map[n.y][n.x].status = Node::Status::open;
+						map[n.y][n.x].cost = map[startPos.y][startPos.x].cost + 1;
+						map[n.y][n.x].CalculateH(goal.pos);
+						map[n.y][n.x].CalculateScore();
+					}
 				}
 			}
 		}
 
 		nodes[index].push(map[startPos.y][startPos.x]);
+		openList[field.Height() - 1][field.Width() - 1] = map[startPos.y][startPos.x].score;
 		while (!nodes[index].empty()) {
 			Node node = nodes[index].top();
-			std::size_t nodesSize = nodes[index].size();
-			for (std::size_t i = 1; i < nodesSize; i++) {
-				int topScore = nodes[i].top().score;
-				if (node.score < topScore) {
-					node = nodes[i].top();
-				}
-			}
-
 			int x = node.pos.x;
 			int y = node.pos.y;
 
@@ -75,7 +70,14 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 
 			openList[x][y] = 0;
 			closedList[x][y] = 1;
-
+			/*
+			for (std::size_t i = 1; i < nodes[index].size(); i++) {
+				int topScore = nodes[i].top().score;	//while2周目:front() called on empty vector
+				if (node.score < topScore) {
+					node = nodes[i].top();
+				}
+			}			
+			*/
 			if (x == goal.pos.x && y == goal.pos.y) {
 				int i = 0;
 				while (!dirMap.empty()) {

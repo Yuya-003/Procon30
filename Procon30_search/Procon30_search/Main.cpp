@@ -6,6 +6,7 @@ std::vector<std::string> SplitLine(const std::string&, char);
 
 int main() {
 	std::string str;
+	size_t i, j;
 
 	//探索結果があるか確認
 	std::fstream resultData("./result.txt", std::ios::in | std::ios::out);
@@ -24,9 +25,9 @@ int main() {
 		while (fieldData >> text) { splited.push_back(SplitLine(text, ',')); }
 
 		//文字を数値に変換
-		for (size_t i = 0; i < splited.size(); i++) {
+		for (i = 0; i < splited.size(); i++) {
 			std::vector<int> line;
-			for (size_t j = 0; j < splited[i].size(); j++) {
+			for (j = 0; j < splited[i].size(); j++) {
 				line.push_back(std::stoi(splited[i][j]));
 			}
 			field.push_back(line);
@@ -37,7 +38,6 @@ int main() {
 		FieldInfo fi(x, y);
 
 		//ポイントと状態を初期化
-		size_t i, j;
 		for (i = 0; i < y; i++) {
 			for (j = 0; j < x; j++) {
 				fi.field[i][j].point = field[i + 1][j];
@@ -46,21 +46,19 @@ int main() {
 		}
 
 		//エージェントの位置とIDを初期化
-		while (i < field.size()) {
+		while (++i < field.size()) {
 			Player pl;
 			pl.id = field[i][0];
 			pl.x = field[i][1] - 1;
 			pl.y = field[i][2] - 1;
 			fi.allies.push_back(pl);
-
-			i++;
 		}
 
 		//探索
-		std::vector<std::vector<Behaviour>> result = bs.Search(fi);
+		std::vector<std::vector<Behaviour>> result = bs.Search(fi);	//問題あり
 
 		//探索結果を出力 → ID:行動:方向
-		for (int i = 0; i < fi.allies.size(); i++) {
+		for (i = 0; i < fi.allies.size(); i++) {
 			int temp = static_cast<int>(result[i][0].action);
 			fieldData << fi.allies[i].id << " : " << temp;
 			if (result[i][0].action != Behaviour::Action::stay) {
@@ -71,10 +69,10 @@ int main() {
 		}
 
 		//2ターン先の行動をターン毎に保存
-		for (int i = 1; i < result[i].size(); i++) {
+		for (size_t i = 1; i < result[i].size(); i++) {
 			resultData << "[" << i << "]" << std::endl;
 			for (int j = 0; i < fi.allies.size(); j++) {
-				int temp = static_cast<int>(result[j][i].action);
+				int temp = static_cast<int>(result[j][i].action);	//error:out of range
 				resultData << fi.allies[j].id << ":" << temp << ":";
 				if (result[j][i].action != Behaviour::Action::stay) {
 					temp = static_cast<int>(result[j][i].dir);
@@ -94,9 +92,9 @@ int main() {
 
 		//結果出力
 		std::fstream fieldData("./field.txt", std::ios::out);
-		for (int i = 1; i < result.size(); i++) {
+		for (size_t i = 1; i < result.size(); i++) {
 			if (result[i] == "[2]") { 
-				for (int j = i; j < result.size(); j++) {
+				for (size_t j = i; j < result.size(); j++) {
 					resultData << result[j] << std::endl;
 				}
 				break; 
