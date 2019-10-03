@@ -1,16 +1,15 @@
 #include "Search.hpp"
+#include "Main.hpp"
 #include <fstream>
 #include <sstream>
-
-std::vector<std::string> SplitLine(const std::string&, char);
 
 int main() {
 	std::string str;
 	size_t i, j;
 
 	//探索結果があるか確認
-	std::fstream resultData("./result.txt", std::ios::in | std::ios::out);
-	resultData >> str;
+	std::ifstream resultIfs("./result.txt");
+	resultIfs >> str;
 
 	if (str == "none") {
 		BasicSearch bs;
@@ -19,10 +18,10 @@ int main() {
 		std::vector<std::vector<int>> field;
 
 		//盤面データ受け取り
-		std::fstream fieldData("./field.txt", std::ios::in | std::ios::out);
+		std::ifstream fieldIfs("./field.txt");
 
 		//文字を分割
-		while (fieldData >> text) { splited.push_back(SplitLine(text, ',')); }
+		while (fieldIfs >> text) { splited.push_back(SplitLine(text, ',')); }
 
 		//文字を数値に変換
 		for (i = 0; i < splited.size(); i++) {
@@ -55,67 +54,73 @@ int main() {
 		}
 
 		//探索
-		std::vector<std::vector<Behaviour>> result = bs.Search(fi);	//問題あり
+		std::vector<std::vector<Behaviour>> result = bs.Search(fi);
+
+		std::ofstream fieldOfs("./field.txt");
+		std::ofstream resultOfs("./result.txt");
 
 		//探索結果を出力 → ID:行動:方向
 		for (i = 0; i < fi.allies.size(); i++) {
 			int temp = static_cast<int>(result[i][0].action);
-			fieldData << fi.allies[i].id << " : " << temp;
+			fieldOfs << fi.allies[i].id << " : " << temp;
 			if (result[i][0].action != Behaviour::Action::stay) {
 				temp = static_cast<int>(result[i][0].dir);
-				resultData << " : " << temp;
+				resultOfs << " : " << temp;
 			}
-			resultData << std::endl;
+			resultOfs << std::endl;
 		}
 
 		//2ターン先の行動をターン毎に保存
-		for (size_t i = 1; i < result[i].size(); i++) {
-			resultData << "[" << i << "]" << std::endl;
-			for (int j = 0; i < fi.allies.size(); j++) {
+		for (i = 1; i < result[i].size(); i++) {
+			resultOfs << "[" << i << "]" << std::endl;
+			for (j = 0; i < fi.allies.size(); j++) {
+				std::cout << static_cast<int>(result[j][i].action) << std::endl;
 				int temp = static_cast<int>(result[j][i].action);	//error:out of range
-				resultData << fi.allies[j].id << ":" << temp << ":";
+				resultOfs << fi.allies[j].id << ":" << temp << ":";
 				if (result[j][i].action != Behaviour::Action::stay) {
 					temp = static_cast<int>(result[j][i].dir);
-					resultData << temp;
+					resultOfs << temp;
 				}
-				resultData << std::endl;
+				resultOfs << std::endl;
 			}
 		}
 	}
 	else {
 		//保存された探索結果を分離
 		std::string field;
-		std::vector<std::string> result;
-		while (std::getline(std::istringstream(str), field, '\n')) {
-			result.push_back(field);
-		}
+		size_t i;
+		std::vector<std::vector<std::string>> result;
+		std::ofstream resultOfs("./result.txt");
+		std::ofstream fieldOfs("./field.txt");
+
+		result.push_back(SplitLine(str, ':'));
+		while (resultIfs >> field) { result.push_back(SplitLine(field, ':')); }
 
 		//結果出力
-		std::fstream fieldData("./field.txt", std::ios::out);
-		for (size_t i = 1; i < result.size(); i++) {
-			if (result[i] == "[2]") { 
-				for (size_t j = i; j < result.size(); j++) {
-					resultData << result[j] << std::endl;
-				}
-				break; 
+		for (i = 1; i < result.size(); i++) {
+			if (result[i][0] == "[2]") { break; }
+
+			field = result[i][0] + ":" + result[i][1];
+			if (result[i][1] != "stay") {
+				field += (" : " + result[i][j]);
 			}
+			field += "\n";
+			fieldOfs << field;
+		}
 
-			fieldData << result[i] << std::endl;
-
-			if (i == result.size() - 1) { resultData << "none"; }
+		if (result[0][0] == "[2]") {
+			resultOfs << "none";
+		}
+		else {
+			resultOfs << "[2]";
+			while (++i && i < result.size()) {
+				field = result[i][0] + ":" + result[i][1];
+				if (result[i][1] != "stay") {
+					field += (" : " + result[i][j]);
+				}
+				field += "\n";
+				resultOfs << field;
+			}
 		}
 	}
-}
-
-std::vector<std::string> SplitLine(const std::string& str, char delim)
-{
-	std::vector<std::string> splited;
-	std::stringstream ss(str);
-	std::string buf;
-
-	while (std::getline(ss, buf, delim)) {
-		splited.push_back(buf);
-	}
-
-	return splited;
 }
