@@ -61,31 +61,26 @@ int main() {
 
 		//探索結果を出力 → ID:行動:方向
 		for (i = 0; i < fi.allies.size(); i++) {
-			int temp = static_cast<int>(result[i][0].action);
-			fieldOfs << fi.allies[i].id << " : " << temp;
+			fieldOfs << fi.allies[i].id << " : " << static_cast<int>(result[i][0].action);
 			if (result[i][0].action != Behaviour::Action::stay) {
-				temp = static_cast<int>(result[i][0].dir);
-				resultOfs << " : " << temp;
+				fieldOfs << " : " << static_cast<int>(result[i][0].dir);
 			}
-			resultOfs << std::endl;
+			fieldOfs << std::endl;
 		}
 
 		//2ターン先の行動をターン毎に保存
-		for (i = 1; i < result[i].size(); i++) {
+		for (i = 1; i < result.size(); i++) {	//error:out of range i=3
 			resultOfs << "[" << i << "]" << std::endl;
-			for (j = 0; i < fi.allies.size(); j++) {
-				std::cout << static_cast<int>(result[j][i].action) << std::endl;
-				int temp = static_cast<int>(result[j][i].action);	//error:out of range
-				resultOfs << fi.allies[j].id << ":" << temp << ":";
+			for (j = 0; j < fi.allies.size(); j++) {
+				resultOfs << fi.allies[j].id << " : " << static_cast<int>(result[j][i].action);
 				if (result[j][i].action != Behaviour::Action::stay) {
-					temp = static_cast<int>(result[j][i].dir);
-					resultOfs << temp;
+					resultOfs << " : " << static_cast<int>(result[j][i].dir);
 				}
 				resultOfs << std::endl;
 			}
 		}
 	}
-	else {
+	else if (str == "") {
 		//保存された探索結果を分離
 		std::string field;
 		size_t i;
@@ -122,5 +117,8 @@ int main() {
 				resultOfs << field;
 			}
 		}
+	}
+	else {
+		std::cout << "Data is not found." << std::endl;
 	}
 }
