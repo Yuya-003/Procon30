@@ -33,6 +33,12 @@ public:
 		inline void CalculateH(Position goal) {
 			hCost = (int)sqrt(pow(goal.x - pos.x, 2) + pow(goal.y - pos.y, 2));
 		}
+
+		//実コストを計算
+		inline void CalcureteCost(int i) {
+			cost += i % 2 == 0 ? 10 : 14;
+		}
+
 		//スコアを計算
 		inline void CalculateScore() {
 			score = hCost + cost - cell.point;
