@@ -1,7 +1,5 @@
 #include "Search.hpp"
 #include "Main.hpp"
-#include <fstream>
-#include <sstream>
 
 int main() {
 	std::string str;
@@ -61,20 +59,20 @@ int main() {
 
 		//探索結果を出力 → ID:行動:方向
 		for (i = 0; i < fi.allies.size(); i++) {
-			fieldOfs << fi.allies[i].id << " : " << static_cast<int>(result[i][0].action);
+			fieldOfs << fi.allies[i].id << ":" << static_cast<int>(result[i][0].action);
 			if (result[i][0].action != Behaviour::Action::stay) {
-				fieldOfs << " : " << static_cast<int>(result[i][0].dir);
+				fieldOfs << ":" << static_cast<int>(result[i][0].dir);
 			}
 			fieldOfs << std::endl;
 		}
 
 		//2ターン先の行動をターン毎に保存
-		for (i = 1; i < result.size(); i++) {	//error:out of range i=3
+		for (i = 1; i < result.size(); i++) {
 			resultOfs << "[" << i << "]" << std::endl;
 			for (j = 0; j < fi.allies.size(); j++) {
-				resultOfs << fi.allies[j].id << " : " << static_cast<int>(result[j][i].action);
+				resultOfs << fi.allies[j].id << ":" << static_cast<int>(result[j][i].action);
 				if (result[j][i].action != Behaviour::Action::stay) {
-					resultOfs << " : " << static_cast<int>(result[j][i].dir);
+					resultOfs << ":" << static_cast<int>(result[j][i].dir);
 				}
 				resultOfs << std::endl;
 			}
