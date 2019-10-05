@@ -17,10 +17,11 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 	std::vector<std::vector<int>> closedList(field.Height(), std::vector<int>(field.Width(), 0));
 	std::vector<std::vector<Behaviour>> behaviour(field.allies.size(), std::vector<Behaviour>(3, Behaviour()));
 	std::priority_queue<Node> nodes[2];
+	Node node;
 	int index = 0;
 	int moveCount = 0;
 
-	for (std::size_t k = 2; k < field.allies.size(); k++) {
+	for (std::size_t k = 0; k < field.allies.size(); k++) {
 		//目的地を計算
 		Node goal;
 		goal.cell.point = (int)1e-6;
@@ -59,10 +60,14 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 			}
 		}
 
-		nodes[index].push(map[startPos.y][startPos.x]);
+		node = map[startPos.y][startPos.x];
+		node.CalculateH(goal.pos);
+		node.CalculateScore();
+		nodes[index].push(node);
 		openList[field.Height() - 1][field.Width() - 1] = map[startPos.y][startPos.x].score;
+
 		while (!nodes[index].empty()) {
-			Node node = nodes[index].top();
+			node = nodes[index].top();
 			int x = node.pos.x;
 			int y = node.pos.y;
 
@@ -70,29 +75,39 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 
 			openList[x][y] = 0;
 			closedList[x][y] = 1;
+
 			/*
-			for (std::size_t i = 1; i < nodes[index].size(); i++) {
-				int topScore = nodes[i].top().score;	//while2周目:front() called on empty vector
-				if (node.score < topScore) {
-					node = nodes[i].top();
+			for (size_t i = 1; i < nodes[index].size(); i++) {
+				if (!nodes[i].empty()) {
+					for (size_t j = 0; j < nodes[i].size(); i++) {
+						std::cout << nodes[i].top().pos.x << "," << nodes[i].top().pos.y << " " << std::endl;
+					}
+					std::cout << std::endl;
+					int topScore = nodes[i].top().score;	//while2周目:front() called on empty vector
+					if (node.score < topScore) {
+						node = nodes[i].top();
+					}
 				}
-			}			
-			*/
-			if (x == goal.pos.x && y == goal.pos.y) {
+			}*/
+
+			if ((x == goal.pos.x || fabs(x - goal.pos.x) == 1) && (y == goal.pos.y || fabs(y - goal.pos.y) == 1)) {	//ここ到達してない
 				int i = 0;
-				while (!dirMap.empty()) {
+				for (size_t i = 0; i < 3; i++) {
+					std::cout << i << std::endl;
 					int j = dirMap[x][y];
 					char c = '0' + (10 - (j + dir / 2) % 2);
-					
+
 					behaviour[k][i].action = Behaviour::Action::move;
 					behaviour[k][i].dir = static_cast<Behaviour::Dir>(10 - (dirMap[x][y] + dir / 2) % 2);
 
 					x += dx[j];
 					y += dy[j];
-					i++;
+
+					if (i == dirMap.size()) { break; }
 				}
 
 				while (!nodes[index].empty()) nodes[index].pop();
+				moveCount = 0;
 				break;
 			}
 
@@ -105,8 +120,9 @@ std::vector<std::vector<Behaviour>> BasicSearch::Search(FieldInfo field) {
 					m0.pos = Position(xdx, ydy);
 					m0.cost = node.cost;
 					m0.score = node.score;
-					m0.CalculateScore();
+					m0.CalcureteCost(i);
 					m0.CalculateH(goal.pos);
+					m0.CalculateScore();
 
 					if (openList[xdx][ydy] == 0) {
 						openList[xdx][ydy] = m0.score;

@@ -1,4 +1,8 @@
 #pragma once
+
+#include <fstream>
+#include <sstream>
+
 //•¶Žš—ñ‚ð•ªŠ„‚·‚é
 inline std::vector<std::string> SplitLine(const std::string& str, char delim)
 {
