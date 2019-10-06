@@ -10,18 +10,26 @@ namespace UI
     class DataTransfer
     {
         private static HttpClient client = new HttpClient();
+        private static string url = "http://localhost";
+        private static string port = "80";
 
         public static void SetToken(string token)
         {
-            client.DefaultRequestHeaders.Add("Authorization", "procon30_example_token");
+            client.DefaultRequestHeaders.Add("Authorization", token);
+            //client.DefaultRequestHeaders.Add("Authorization", "procon30_example_token");
         }
 
-        public static async Task<string> GetHtml(string url)
+        private static async Task<string> GetHtml(string url)
         {
-            client.DefaultRequestHeaders.Add("Authorization", "procon30_example_token");
-            var response = client.GetAsync(url);
+            var response = client.GetAsync(DataTransfer.url + ":" + port + "/" + url);
             var content = await response.Result.Content.ReadAsStringAsync();
             return content;
+        }
+
+        public static async Task<string> GetPriorInformation()
+        {
+            string result = await Task.Run(() => GetHtml("matches"));
+            return result;
         }
     }
 }
