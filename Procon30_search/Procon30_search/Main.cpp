@@ -52,7 +52,11 @@ int main() {
 		}
 
 		//探索
-		std::vector<std::vector<Behaviour>> result = bs.Search(fi);
+		//std::vector<std::vector<Behaviour>> result = bs.Search(fi);
+		std::vector<std::vector<Behaviour>> result;
+		for (i = 0; i < fi.allies.size(); i++) {
+			result.push_back(bs.Search(fi, fi.allies[i]));
+		}
 
 		std::ofstream fieldOfs("./field.txt");
 		std::ofstream resultOfs("./result.txt");
@@ -67,6 +71,7 @@ int main() {
 		}
 
 		//2ターン先の行動をターン毎に保存
+		resultOfs << "Save" << std::endl;
 		for (i = 1; i < result.size(); i++) {
 			resultOfs << "[" << i << "]" << std::endl;
 			for (j = 0; j < fi.allies.size(); j++) {
@@ -78,7 +83,7 @@ int main() {
 			}
 		}
 	}
-	else if (str == "") {
+	else if (str == "Save") {
 		//保存された探索結果を分離
 		std::string field;
 		size_t i;
@@ -86,7 +91,6 @@ int main() {
 		std::ofstream resultOfs("./result.txt");
 		std::ofstream fieldOfs("./field.txt");
 
-		result.push_back(SplitLine(str, ':'));
 		while (resultIfs >> field) { result.push_back(SplitLine(field, ':')); }
 
 		//結果出力
@@ -95,7 +99,7 @@ int main() {
 
 			field = result[i][0] + ":" + result[i][1];
 			if (result[i][1] != "stay") {
-				field += (" : " + result[i][2]);
+				field += (":" + result[i][2]);
 			}
 			field += "\n";
 			fieldOfs << field;
@@ -105,11 +109,11 @@ int main() {
 			resultOfs << "none";
 		}
 		else {
-			resultOfs << "[2]";
+			resultOfs << "Save" << std::endl << "[2]" << std::endl;
 			while (++i && i < result.size()) {
 				field = result[i][0] + ":" + result[i][1];
 				if (result[i][1] != "stay") {
-					field += (" : " + result[i][2]);
+					field += (":" + result[i][2]);
 				}
 				field += "\n";
 				resultOfs << field;
