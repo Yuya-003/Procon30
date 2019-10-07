@@ -15,64 +15,19 @@ namespace procon30UI
 {
     public partial class Form1 : Form
     {
-        /*受け取り可能な情報
-        フィールド情報
-        ・ width:integer(フィールド横幅)
-        ・ height:integer(フィールド縦幅)
-        ・ points:integer 二次元配列(各マスの点数)
-        ・ startedAtUnixTime:integer(試合が始まった Unix 時間)
-        ・ turn:integer(ターン)
-        ・ tiled:integer 二次元配列(タイル配置状況)
-        ・ teams:オブジェクト配列(各チーム状況)
-            ・ teamID:integer(チーム ID)
-            ・ agents:オブジェクト配列,(各エージェント状況)
-                ・agentID:integer(エージェント ID)
-                ・x:integer(x座標)
-                ・y:integer(y座標)
-            ・ tilePoint:integer(タイルポイント)
-            ・ areaPoint:integer(領域ポイント)
-        ・ actions:オブジェクト配列(各行動履歴)
-            ・ agentID:integer(エージェント ID)
-            ・ type:string(行動の種類,“move”:移動, “remove”:除去, “stay”:停留)
-            ・ dx:integer(行動のx方向の向き,-1:左,0:中,1:右)
-            ・ dy:integer(行動のy方向の向き,-1:上,0:中,1:下)
-            ・ turn:integer(行動ターン)
-            ・ apply:integer(行動の適応状況,-1:無効,0:競合,1:有効)
-        ・ actions:オブジェクト配列(各エージェントの行動)
-            ・ agentID:integer(エージェント ID)
-            ・ type:string(行動の種類,“move”:移動, “remove”:除去, “stay”:停留)
-            ・ dx:integer(行動のx方向の向き,-1:左,0:中,1:右)
-            ・ dy:integer(行動のy方向の向き,-1:上,0:中,1:下)
-            事前所法取得API内容
-            ・試合のID
-            ・対戦相手の名前
-            ・試合における自分のteamID
-            ・試合のターン数
-            ・試合の1ターンあたりの時間(ms)
-            ・試合のターンとターンの間の時間(ms)
-        */
-
-
-
-
         const int Width_length = 1500;//フォームの幅
         const int Height_length = 1000;//フォーㇺの高さ
-        const int mass_wid = 30;//マスの幅
+        const int mass_wid = 33;//マスの幅
         int mass_basic = mass_wid * 4;//空白スペース
-        bool GetAPIflag = true;
-
+        bool GetAPIFlag = true;
+        bool GetSeachFlag = true;
 
         //jsonから取得
-
-
-        int width = 10;//フィールドの横マス
-        int height = 10;//フィールドの縦マス
-        int[,] points;//ポイント情報
+        int width = 0;
+        int height = 0;
+        int[][] points;//ポイント情報
         int[,] tiled;//タイルの情報
         int startedAtUnixTime = 0;//時間管理
-        int delta;//unixtimeからの経過時間
-
-
 
         int[,] teams;//チームの情報
 
@@ -107,38 +62,6 @@ namespace procon30UI
         int turnInterval = 10;//試合のターンとターンの間の時間(ms)
 
 
-        /*
-        class API バグるのでとりまこんなかんじ
-        {
-            int matchID;
-            int enemyTeamName;
-            int teamID = 5;//jsonからも取得可能？？
-            int totalTurn = 10;//試合ごとに変わるその試合の総ターン
-            //int oneTurnInterval 試合の1ターンあたりの時間(ms) つかわんくねこれ？
-            int turnInterval = 10;//試合のターンとターンの間の時間(ms)
-            public API()
-            {
-            }
-        }
-        */
-
-        class Actions
-        {
-            public int agentID;
-            public string type;//(行動の種類,“move”:移動, “remove”:除去, “stay”:停留)
-            public int dx;//(行動のx方向の向き,-1:左,0:中,1:右)
-            public int dy;//(行動のy方向の向き,-1:上,0:中,1:下)
-            public int turn;
-            public int apply;
-
-            public Actions()
-            {
-
-            }
-
-
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             Width = Width_length;
@@ -146,13 +69,22 @@ namespace procon30UI
             label11.Text = string.Format("経過時間 {0}秒", time);
         }
 
-
         public Form1()
         {
             InitializeComponent();
+            var fieldInfo = UI.Structure.FieldJson.LoadFromJsonFile("C:\\Users\\Pepper\\Documents\\procon30_json\\F-2.json");
+
+            //jsonからの代入
+            width = fieldInfo.Width;//フィールドの横マス
+            height = fieldInfo.Height;//フィールドの縦マス
+            startedAtUnixTime = fieldInfo.StartedAtUnixTime;
+            turn = fieldInfo.Turn;
 
             label1.Text = string.Format("縦 {0}マス", height);
             label2.Text = string.Format("横 {0}マス", width);
+            label3.Text = string.Format("{0} ターン目", turn);
+            label29.Text = string.Format("開始時のunixtime : {0}", startedAtUnixTime);
+
             label4.Text = string.Format("タイルポイント       {0}", tilePoint);
             label5.Text = string.Format("エリアポイント        {0}", areaPoint);
             label6.Text = string.Format("敵 タイルポイント  {0}", enemytilePoint);
@@ -176,19 +108,7 @@ namespace procon30UI
 
 
 
-            points = new int[height, width];
-
-            points[0, 0] = 12; points[0, 1] = 3; points[0, 2] = 5; points[0, 3] = 3; points[0, 4] = 1; points[0, 5] = 1; points[0, 6] = 3; points[0, 7] = 5; points[0, 8] = 3; points[0, 9] = 12;
-            points[1, 0] = 3; points[1, 1] = 5; points[1, 2] = 7; points[1, 3] = 5; points[1, 4] = 3; points[1, 5] = 3; points[1, 6] = 5; points[1, 7] = 7; points[1, 8] = 5; points[1, 9] = 3;
-            points[2, 0] = 5; points[2, 1] = 7; points[2, 2] = 10; points[2, 3] = 7; points[2, 4] = 5; points[2, 5] = 5; points[2, 6] = 7; points[2, 7] = 10; points[2, 8] = 7; points[2, 9] = 5;
-            points[3, 0] = 3; points[3, 1] = 5; points[3, 2] = 7; points[3, 3] = 5; points[3, 4] = 3; points[3, 5] = 3; points[3, 6] = 5; points[3, 7] = 7; points[3, 8] = 5; points[3, 9] = 3;
-            points[4, 0] = 1; points[4, 1] = 3; points[4, 2] = 5; points[4, 3] = 3; points[4, 4] = 12; points[4, 5] = 12; points[4, 6] = 3; points[4, 7] = 5; points[4, 8] = 3; points[4, 9] = 1;
-            points[5, 0] = 1; points[5, 1] = 3; points[5, 2] = 5; points[5, 3] = 3; points[5, 4] = 12; points[5, 5] = 12; points[5, 6] = 3; points[5, 7] = 5; points[5, 8] = 3; points[5, 9] = 1;
-            points[6, 0] = 3; points[6, 1] = 5; points[6, 2] = 7; points[6, 3] = 5; points[6, 4] = 3; points[6, 5] = 3; points[6, 6] = 5; points[6, 7] = 7; points[6, 8] = 5; points[6, 9] = 3;
-            points[7, 0] = 5; points[7, 1] = 7; points[7, 2] = 10; points[7, 3] = 7; points[7, 4] = 5; points[7, 5] = 5; points[7, 6] = 7; points[7, 7] = 10; points[7, 8] = 7; points[7, 9] = 5;
-            points[8, 0] = 3; points[8, 1] = 5; points[8, 2] = 7; points[8, 3] = 5; points[8, 4] = 3; points[8, 5] = 3; points[8, 6] = 5; points[8, 7] = 7; points[8, 8] = 5; points[8, 9] = 3;
-            points[9, 0] = 12; points[9, 1] = 3; points[9, 2] = 5; points[9, 3] = 3; points[9, 4] = 1; points[9, 5] = 1; points[9, 6] = 3; points[9, 7] = 5; points[9, 8] = 3; points[9, 9] = 12;
-
+            points = fieldInfo.Points;
             tiled = new int[height, width];
 
             tiled[0, 0] = 0; tiled[0, 1] = 0; tiled[0, 2] = 0; tiled[0, 3] = 0; tiled[0, 4] = 0; tiled[0, 5] = 0; tiled[0, 6] = 0; tiled[0, 7] = 0; tiled[0, 8] = 0; tiled[0, 9] = 0;
@@ -222,7 +142,6 @@ namespace procon30UI
             {
                 time += 1;
                 startedAtUnixTime += 1;
-                delta = startedAtUnixTime - turn;
             };
 
             timer.Start();
@@ -238,20 +157,38 @@ namespace procon30UI
 
         override protected void OnPaint(PaintEventArgs e)
         {
-            this.Left = 20;
-            this.Top = 40;
+            this.Left = 10;
+            this.Top = 30;
 
             try
             {
 
-                label3.Text = string.Format("{0} ターン目", turn);
                 label9.Text = string.Format("総ターン    {0}ターン", totalTurn);
                 int remainingturn = totalTurn - turn;
 
                 label8.Text = string.Format("残り         {0}ターン", remainingturn.ToString());
 
-                //秒の入力
                 label10.Text = string.Format("{0}秒以内に送信", turnInterval);
+
+                //履歴の入力
+                label12.Text = string.Format("行動履歴");
+                label13.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label14.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label15.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label16.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label17.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label18.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label19.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label20.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label21.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label22.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label23.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label24.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label25.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label26.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label27.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label28.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+
 
                 if (turnInterval - 3 == time)
                 {
@@ -260,7 +197,7 @@ namespace procon30UI
 
                 }
 
-
+                //プログラムの終了
                 if (turn > totalTurn + 3)//念のために+3ほどしておく
                 {
                     Environment.Exit(0x8020);
@@ -328,10 +265,9 @@ namespace procon30UI
                     Graphics a = e.Graphics;
                     Font ft = new Font("MS Serif", 15);
                     PointF pt = new PointF(j * mass_wid + mass_basic + 2, i * mass_wid + mass_basic + 6);
-                    a.DrawString(points[i, j].ToString(), ft, Brushes.Black, pt);
+                    a.DrawString(points[i][j].ToString(), ft, Brushes.Black, pt);
                 }
             }
-
 
             /*int[] agent;
             agent = new int[agentOfenemies];
@@ -367,10 +303,8 @@ namespace procon30UI
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        public void SearchStart()
         {
-            //unixtimeのタイマースタート
-            turn += 1;
             time = 0;
 
             //探索の開始
@@ -385,7 +319,11 @@ namespace procon30UI
                     
             }
             */
+        }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SearchStart();
         }
 
         private void tickTimer(object sender, EventArgs e)
@@ -397,11 +335,11 @@ namespace procon30UI
         {
             //事前情報取得するまでwhileを回すかんじ
             /*
-            while (GetAPIflag)
+            while (GetAPIFlag)
             {
                 if (事前情報が入ったら)
                 {
-                    GetAPIflag = false;
+                    GetAPIFlag = false;
                 }
             }*/
         }
