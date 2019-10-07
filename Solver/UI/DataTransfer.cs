@@ -31,5 +31,11 @@ namespace UI
             string result = await Task.Run(() => GetHtml("matches"));
             return result;
         }
+
+        public static async Task<string> GetMatcheInformation(int id)
+        {
+            string result = await Task.Run(() => GetHtml("matches/" + id.ToString()));
+            return result;
+        }
     }
 }
