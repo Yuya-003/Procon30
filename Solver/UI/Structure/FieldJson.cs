@@ -68,6 +68,9 @@ namespace UI.Structure
         [JsonProperty("turn")]
         public int Turn { get; set; }
 
+        [JsonProperty("tiled")]
+        public int[][] Tiled { get; set; }
+
         [JsonProperty("teams")]
         public Team[] Teams { get; set; }
 
