@@ -17,6 +17,17 @@ namespace UI.Structure
         [JsonProperty("dy")]
         public int Dy { get; set; }
 
+        public ActionJson(){}
+
+        public ActionJson(string str)
+        {
+            ActionJson action = JsonConvert.DeserializeObject<ActionJson>(str);
+
+            AgentID = action.AgentID;
+            Type = action.Type;
+            Dx = action.Dx;
+            Dy = action.Dy;
+        }
 
         public static ActionJson LoadFromJsonFile(string FileName)
         {
