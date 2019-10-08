@@ -77,7 +77,21 @@ namespace UI.Structure
         [JsonProperty("actions")]
         public Action[] Actions { get; set; }
 
+        public FieldJson(){}
 
+        public FieldJson(string str)
+        {
+            FieldJson field = JsonConvert.DeserializeObject<FieldJson>(str);
+
+            Width = field.Width;
+            Height = field.Height;
+            Points = field.Points;
+            StartedAtUnixTime = field.StartedAtUnixTime;
+            Turn = field.Turn;
+            Tiled = field.Tiled;
+            Teams = field.Teams;
+            Actions = field.Actions;
+        }
 
         public static FieldJson LoadFromJsonFile(string FileName)
         {
