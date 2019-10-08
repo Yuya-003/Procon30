@@ -29,12 +29,8 @@ namespace procon30UI
         int[][] points;//ポイント情報
         int[][] tiled;//タイルの情報
         int startedAtUnixTime = 0;//時間管理
-
         int[,] teams;//チームの情報
-
-
         int enemyTeamID = 0;
-
         int tilePoint = 0;
         int areaPoint = 0;
         int enemyTilePoint = 0;
@@ -43,23 +39,15 @@ namespace procon30UI
         //当日知らされる
         int agentID = 0;
         int enemyagentID = 0;
-
-
-        //agentの数を受け取る
-        int agentOfenemies = 6;//2~8
-
         int time = 0;
         int turn = 0;//ターン数
 
-
-        //jsonから取得
         //APIから取得
-
         int matchID;
         int enemyTeamName;
         int teamID = 0;//jsonからも取得可能？？
         int totalTurn = 10;//試合ごとに変わるその試合の総ターン
-      //int oneTurnInterval 試合の1ターンあたりの時間(ms) つかわんくねこれ？
+        int oneTurnInterval = 0; //試合の1ターンあたりの時間(ms) つかわんくねこれ？
         int turnInterval = 10;//試合のターンとターンの間の時間(ms)
 
         private void Form1_Load(object sender, EventArgs e)
@@ -75,8 +63,8 @@ namespace procon30UI
             fieldInfo = UI.Structure.FieldJson.LoadFromJsonFile("C:\\Users\\Pepper\\Documents\\procon30_json\\F-2.json");
 
             //jsonからの代入
-            width = fieldInfo.Width;//フィールドの横マス
-            height = fieldInfo.Height;//フィールドの縦マス
+            width = fieldInfo.Width;
+            height = fieldInfo.Height;
             startedAtUnixTime = fieldInfo.StartedAtUnixTime;
             turn = fieldInfo.Turn;
             teamID = fieldInfo.Teams[0].TeamID;
@@ -90,18 +78,13 @@ namespace procon30UI
             label2.Text = string.Format("横 {0}マス", width);
             label3.Text = string.Format("{0} ターン目", turn);
             label29.Text = string.Format("開始時のunixtime : {0}", startedAtUnixTime);
-
             label4.Text = string.Format("タイルポイント       {0}", tilePoint);
             label5.Text = string.Format("エリアポイント        {0}", areaPoint);
             label6.Text = string.Format("敵 タイルポイント  {0}", enemyTilePoint);
             label7.Text = string.Format("敵 エリアポイント   {0}", enemyAreaPoint);
 
-
-
-
             points = fieldInfo.Points;
             tiled = fieldInfo.Tiled;
-
             teams = new int[height,width];
 
             for (int i = 0; i < fieldInfo.Teams[0].Agents.Length; i++)//teamsの代入
@@ -117,7 +100,6 @@ namespace procon30UI
                 time += 1;
                 startedAtUnixTime += 1;
             };
-
             timer.Start();
         }
 
@@ -160,18 +142,14 @@ namespace procon30UI
             }
 
             Graphics g = e.Graphics;
-
-
-
+            //grph.DrawLine (ペン，始点x座標， 始点y座標，終点x座標， 終点y座標)
             for (int n = 0; n <= width; n++)
             {
-                //grph.DrawLine (ペン，始点x座標， 始点y座標，終点x座標， 終点y座標)
                 g.DrawLine(Pens.Black, n * mass_wid + mass_basic, mass_basic, n * mass_wid + mass_basic, mass_wid * height + mass_basic);// y 軸方向の線
             }
 
             for (int i = 0; i <= height; i++)
             {
-                //grph.DrawLine (ペン，始点x座標， 始点y座標，終点x座標， 終点y座標)
                 g.DrawLine(Pens.Black, mass_basic, i * mass_wid + mass_basic, mass_wid * width + mass_basic, i * mass_wid + mass_basic);// x軸方向の線 
             }
 
@@ -201,6 +179,7 @@ namespace procon30UI
                 {
                     foreach(UI.Structure.FieldJson.Team.Agent agent in fieldInfo.Teams[0].Agents)
                     {
+                        if (!action.Apply.Equals("move")) break;
                         if (action.AgentID == agent.AgentID)
                         {
                             if (fieldInfo.Teams[0].TeamID == 1)//TODO あとで変更の可能性あり
@@ -244,9 +223,6 @@ namespace procon30UI
                 }
             }
 
-
-
-            
             //点数をフィールドに入れる
             for (int i = 0; i < height; i++)
             {
@@ -259,44 +235,41 @@ namespace procon30UI
                 }
             }
 
-            /*int[] agent;
-            agent = new int[agentOfenemies];
-             public static void highestScore()
-             {
-                 if()
-                 {            
-                       for(int n =0;n<agent[agentOfenemies];n++)
-                       {
-                           for(int i =0;i<height;i++)
-                           {
-                               for(int j =0;j<width;j++)
-                               {       
-                                   if(teams[i,j] == agentID[0] || teams[i,j] == agentID[1])
-                                   {
-                                       int[]  mawari;
-                                       mawari = new int[8];
-                                       mawari[0] = points[i-1,j-1]; mawari[1] = points[i-1,j]; mawari[2] = points[i-1,j+1];
-                                       mawari[3] = points[i,j-1];                               mawari[4] = points[i,j+1];
-                                       mawari[5] = points[i+1,j-1]; mawari[6] = points[i+1,j]; mawari[7] = points[i+1,j+1];
-                                       Array.Sort(mawari);
-                                   //mawari[8]; //これが一番大きい
-                                   }
-                               }
-                           }
-                       }
-                 }
-
-            周りが自分のタイルか否か？
-            ↓
-            周りで最も点数が高いものはどれか？
-             }*/
-
+            //int[] agent;
+            //agent = new int[agentOfenemies];
+            // public void highestScore()
+            // {
+            //     if()
+            //     {            
+            //           for(int n =0;n<agent[agentOfenemies];n++)
+            //           {
+            //               for(int i =0;i<height;i++)
+            //               {
+            //                   for(int j =0;j<width;j++)
+            //                   {       
+            //                       if(teams[i,j] == agentID[0] || teams[i,j] == agentID[1])
+            //                       {
+            //                           int[]  mawari;
+            //                           mawari = new int[8];
+            //                           mawari[0] = points[i-1,j-1]; mawari[1] = points[i-1,j]; mawari[2] = points[i-1,j+1];
+            //                           mawari[3] = points[i,j-1];                               mawari[4] = points[i,j+1];
+            //                           mawari[5] = points[i+1,j-1]; mawari[6] = points[i+1,j]; mawari[7] = points[i+1,j+1];
+            //                           Array.Sort(mawari);
+            //                       //mawari[8]; //これが一番大きい
+            //                       }
+            //                   }
+            //               }
+            //           }
+            //     }
+            //周りが自分のタイルか否か？
+            //↓
+            //周りで最も点数が高いものはどれか？
+            // }
         }
 
         public void SearchStart()
         {
             time = 0;
-
             //探索の開始
             System.Diagnostics.Process p = System.Diagnostics.Process.Start("notepad.exe");//探索.exe
             /*
@@ -306,11 +279,9 @@ namespace procon30UI
                 {
                     
                 }
-                    
             }
             */
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             SearchStart();
@@ -334,5 +305,4 @@ namespace procon30UI
             }*/
         }
     }
-
 }
