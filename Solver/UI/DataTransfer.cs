@@ -22,20 +22,25 @@ namespace UI
         private static async Task<string> GetHtml(string url)
         {
             var response = client.GetAsync(DataTransfer.url + ":" + port + "/" + url);
-            var content = await response.Result.Content.ReadAsStringAsync();
-            return content;
+            return await response.Result.Content.ReadAsStringAsync();
         }
 
         public static async Task<string> GetPriorInformation()
         {
-            string result = await Task.Run(() => GetHtml("matches"));
-            return result;
+            return await Task.Run(() => GetHtml("matches"));
         }
 
-        public static async Task<string> GetMatcheInformation(int id)
+        public static async Task<Structure.FieldJson> GetMatcheInformation(int id)
         {
-            string result = await Task.Run(() => GetHtml("matches/" + id.ToString()));
-            return result;
+            var field = new Structure.FieldJson(await Task.Run(() => GetHtml("matches/" + id.ToString())));
+            return field;
+        }
+
+        public static async Task<Structure.ActionJson[]> PostAction(int id, string action)
+        {
+            var content = new StringContent("", Encoding.UTF8, @"application/json");
+            var response = client.PostAsync(url + ":" + port + "/matches/" + id.ToString() + "/action", content);
+            return await response.Result.Content.ReadAsStringAsync();
         }
     }
 }
