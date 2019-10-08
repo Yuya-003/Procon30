@@ -65,6 +65,9 @@ namespace UI.Structure
         [JsonProperty("startedAtUnixTime")]
         public int StartedAtUnixTime { get; set; }
 
+        [JsonProperty("tiled")]
+        public int[][] Tiled { get; set; }
+
         [JsonProperty("turn")]
         public int Turn { get; set; }
 

@@ -23,25 +23,26 @@ namespace procon30UI
         bool GetSeachFlag = true;
 
         //jsonから取得
+        UI.Structure.FieldJson fieldInfo;
         int width = 0;
         int height = 0;
         int[][] points;//ポイント情報
-        int[,] tiled;//タイルの情報
+        int[][] tiled;//タイルの情報
         int startedAtUnixTime = 0;//時間管理
 
         int[,] teams;//チームの情報
 
 
-        int enemyTeamID = 6;
+        int enemyTeamID = 0;
 
-        int tilePoint = 9;
+        int tilePoint = 0;
         int areaPoint = 0;
-        int enemytilePoint = 9;
-        int enemyareaPoint = 0;
+        int enemyTilePoint = 0;
+        int enemyAreaPoint = 0;
 
         //当日知らされる
-        int agentID = 9;
-        int enemyagentID = 10;
+        int agentID = 0;
+        int enemyagentID = 0;
 
 
         //agentの数を受け取る
@@ -56,11 +57,10 @@ namespace procon30UI
 
         int matchID;
         int enemyTeamName;
-        int teamID = 5;//jsonからも取得可能？？
+        int teamID = 0;//jsonからも取得可能？？
         int totalTurn = 10;//試合ごとに変わるその試合の総ターン
-                           //int oneTurnInterval 試合の1ターンあたりの時間(ms) つかわんくねこれ？
+      //int oneTurnInterval 試合の1ターンあたりの時間(ms) つかわんくねこれ？
         int turnInterval = 10;//試合のターンとターンの間の時間(ms)
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -72,13 +72,19 @@ namespace procon30UI
         public Form1()
         {
             InitializeComponent();
-            var fieldInfo = UI.Structure.FieldJson.LoadFromJsonFile("C:\\Users\\Pepper\\Documents\\procon30_json\\F-2.json");
+            fieldInfo = UI.Structure.FieldJson.LoadFromJsonFile("C:\\Users\\Pepper\\Documents\\procon30_json\\F-2.json");
 
             //jsonからの代入
             width = fieldInfo.Width;//フィールドの横マス
             height = fieldInfo.Height;//フィールドの縦マス
             startedAtUnixTime = fieldInfo.StartedAtUnixTime;
             turn = fieldInfo.Turn;
+            teamID = fieldInfo.Teams[0].TeamID;
+            enemyTeamID = fieldInfo.Teams[1].TeamID;
+            tilePoint = fieldInfo.Teams[0].TilePoint;
+            areaPoint = fieldInfo.Teams[0].AreaPoint;
+            enemyTilePoint = fieldInfo.Teams[1].TilePoint;
+            areaPoint = fieldInfo.Teams[1].AreaPoint;
 
             label1.Text = string.Format("縦 {0}マス", height);
             label2.Text = string.Format("横 {0}マス", width);
@@ -87,56 +93,24 @@ namespace procon30UI
 
             label4.Text = string.Format("タイルポイント       {0}", tilePoint);
             label5.Text = string.Format("エリアポイント        {0}", areaPoint);
-            label6.Text = string.Format("敵 タイルポイント  {0}", enemytilePoint);
-            label7.Text = string.Format("敵 エリアポイント   {0}", enemyareaPoint);
-
-
-            int[] agentID = new int[agentOfenemies];//半分より上は敵
-            for (int i = 0; i < agentOfenemies; i++)
-            {
-                //agentID[i] = agentID;
-
-                agentID[0] = 9;
-                agentID[1] = 10;
-                agentID[2] = 11;
-                agentID[3] = 12;
-                agentID[4] = 13;
-                agentID[5] = 14;
-            }
-
+            label6.Text = string.Format("敵 タイルポイント  {0}", enemyTilePoint);
+            label7.Text = string.Format("敵 エリアポイント   {0}", enemyAreaPoint);
 
 
 
 
             points = fieldInfo.Points;
-            tiled = new int[height, width];
+            tiled = fieldInfo.Tiled;
 
-            tiled[0, 0] = 0; tiled[0, 1] = 0; tiled[0, 2] = 0; tiled[0, 3] = 0; tiled[0, 4] = 0; tiled[0, 5] = 0; tiled[0, 6] = 0; tiled[0, 7] = 0; tiled[0, 8] = 0; tiled[0, 9] = 0;
-            tiled[1, 0] = 5; tiled[1, 1] = 0; tiled[1, 2] = 0; tiled[1, 3] = 0; tiled[1, 4] = 0; tiled[1, 5] = 0; tiled[1, 6] = 0; tiled[1, 7] = 0; tiled[1, 8] = 0; tiled[1, 9] = 6;
-            tiled[2, 0] = 0; tiled[2, 1] = 0; tiled[2, 2] = 0; tiled[2, 3] = 0; tiled[2, 4] = 0; tiled[2, 5] = 0; tiled[2, 6] = 0; tiled[2, 7] = 0; tiled[2, 8] = 0; tiled[2, 9] = 0;
-            tiled[3, 0] = 0; tiled[3, 1] = 0; tiled[3, 2] = 0; tiled[3, 3] = 0; tiled[3, 4] = 5; tiled[3, 5] = 0; tiled[3, 6] = 0; tiled[3, 7] = 0; tiled[3, 8] = 0; tiled[3, 9] = 0;
-            tiled[4, 0] = 0; tiled[4, 1] = 0; tiled[4, 2] = 0; tiled[4, 3] = 0; tiled[4, 4] = 0; tiled[4, 5] = 0; tiled[4, 6] = 0; tiled[4, 7] = 0; tiled[4, 8] = 0; tiled[4, 9] = 0;
-            tiled[5, 0] = 0; tiled[5, 1] = 0; tiled[5, 2] = 0; tiled[5, 3] = 0; tiled[5, 4] = 0; tiled[5, 5] = 0; tiled[5, 6] = 0; tiled[5, 7] = 0; tiled[5, 8] = 0; tiled[5, 9] = 0;
-            tiled[6, 0] = 0; tiled[6, 1] = 0; tiled[6, 2] = 0; tiled[6, 3] = 0; tiled[6, 4] = 0; tiled[6, 5] = 6; tiled[6, 6] = 0; tiled[6, 7] = 0; tiled[6, 8] = 0; tiled[6, 9] = 0;
-            tiled[7, 0] = 0; tiled[7, 1] = 0; tiled[7, 2] = 0; tiled[7, 3] = 0; tiled[7, 4] = 0; tiled[7, 5] = 0; tiled[7, 6] = 0; tiled[7, 7] = 0; tiled[7, 8] = 0; tiled[7, 9] = 0;
-            tiled[8, 0] = 5; tiled[8, 1] = 0; tiled[8, 2] = 0; tiled[8, 3] = 0; tiled[8, 4] = 0; tiled[8, 5] = 0; tiled[8, 6] = 0; tiled[8, 7] = 0; tiled[8, 8] = 0; tiled[8, 9] = 6;
-            tiled[9, 0] = 0; tiled[9, 1] = 0; tiled[9, 2] = 0; tiled[9, 3] = 0; tiled[9, 4] = 0; tiled[9, 5] = 0; tiled[9, 6] = 0; tiled[9, 7] = 0; tiled[9, 8] = 0; tiled[9, 9] = 0;
+            teams = new int[height,width];
 
-            teams = new int[height, width];
-
-            teams[0, 0] = 0; teams[0, 1] = 0; teams[0, 2] = 0; teams[0, 3] = 0; teams[0, 4] = 0; teams[0, 5] = 0; teams[0, 6] = 0; teams[0, 7] = 0; teams[0, 8] = 0; teams[0, 9] = 0;
-            teams[1, 0] = agentID[0]; teams[1, 1] = 0; teams[1, 2] = 0; teams[1, 3] = 0; teams[1, 4] = 0; teams[1, 5] = 0; teams[1, 6] = 0; teams[1, 7] = 0; teams[1, 8] = 0; teams[1, 9] = agentID[1];
-            teams[2, 0] = 0; teams[2, 1] = 0; teams[2, 2] = 0; teams[2, 3] = 0; teams[2, 4] = 0; teams[2, 5] = 0; teams[2, 6] = 0; teams[2, 7] = 0; teams[2, 8] = 0; teams[2, 9] = 0;
-            teams[3, 0] = 0; teams[3, 1] = 0; teams[3, 2] = 0; teams[3, 3] = 0; teams[3, 4] = agentID[0]; teams[3, 5] = 0; teams[3, 6] = 0; teams[3, 7] = 0; teams[3, 8] = 0; teams[3, 9] = 0;
-            teams[4, 0] = 0; teams[4, 1] = 0; teams[4, 2] = 0; teams[4, 3] = 0; teams[4, 4] = 0; teams[4, 5] = 0; teams[4, 6] = 0; teams[4, 7] = 0; teams[4, 8] = 0; teams[4, 9] = 0;
-            teams[5, 0] = 0; teams[5, 1] = 0; teams[5, 2] = 0; teams[5, 3] = 0; teams[5, 4] = 0; teams[5, 5] = 0; teams[5, 6] = 0; teams[5, 7] = 0; teams[5, 8] = 0; teams[5, 9] = 0;
-            teams[6, 0] = 0; teams[6, 1] = 0; teams[6, 2] = 0; teams[6, 3] = 0; teams[6, 4] = 0; teams[6, 5] = agentID[1]; teams[6, 6] = 0; teams[6, 7] = 0; teams[6, 8] = 0; teams[6, 9] = 0;
-            teams[7, 0] = 0; teams[7, 1] = 0; teams[7, 2] = 0; teams[7, 3] = 0; teams[7, 4] = 0; teams[7, 5] = 0; teams[7, 6] = 0; teams[7, 7] = 0; teams[7, 8] = 0; teams[7, 9] = 0;
-            teams[8, 0] = agentID[0]; teams[8, 1] = 0; teams[8, 2] = 0; teams[8, 3] = 0; teams[8, 4] = 0; teams[8, 5] = 0; teams[8, 6] = 0; teams[8, 7] = 0; teams[8, 8] = 0; teams[8, 9] = agentID[1];
-            teams[9, 0] = 0; teams[9, 1] = 0; teams[9, 2] = 0; teams[9, 3] = 0; teams[9, 4] = 0; teams[9, 5] = 0; teams[9, 6] = 0; teams[9, 7] = 0; teams[9, 8] = 0; teams[9, 9] = 0;
+            for (int i = 0; i < fieldInfo.Teams[0].Agents.Length; i++)//teamsの代入
+            {
+                teams[fieldInfo.Teams[0].Agents[i].X - 1, fieldInfo.Teams[0].Agents[i].Y - 1] = fieldInfo.Teams[0].Agents[i].AgentID;
+                teams[fieldInfo.Teams[1].Agents[i].X - 1, fieldInfo.Teams[1].Agents[i].Y - 1] = fieldInfo.Teams[1].Agents[i].AgentID;
+            }
 
             //時間管理
-
             System.Timers.Timer timer = new System.Timers.Timer(1000);
             timer.Elapsed += (sender, e) =>
             {
@@ -153,8 +127,6 @@ namespace procon30UI
 
         }
 
-
-
         override protected void OnPaint(PaintEventArgs e)
         {
             this.Left = 10;
@@ -162,39 +134,17 @@ namespace procon30UI
 
             try
             {
-
-                label9.Text = string.Format("総ターン    {0}ターン", totalTurn);
                 int remainingturn = totalTurn - turn;
-
+                label9.Text = string.Format("総ターン    {0}ターン", totalTurn);
                 label8.Text = string.Format("残り         {0}ターン", remainingturn.ToString());
-
                 label10.Text = string.Format("{0}秒以内に送信", turnInterval);
 
-                //履歴の入力
-                label12.Text = string.Format("行動履歴");
-                label13.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label14.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label15.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label16.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label17.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label18.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label19.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label20.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label21.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label22.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label23.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label24.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label25.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label26.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label27.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label28.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
 
 
                 if (turnInterval - 3 == time)
                 {
                     //一番点数の高いところにいくやつをここに書く
                     //highestScore();
-
                 }
 
                 //プログラムの終了
@@ -211,6 +161,8 @@ namespace procon30UI
 
             Graphics g = e.Graphics;
 
+
+
             for (int n = 0; n <= width; n++)
             {
                 //grph.DrawLine (ペン，始点x座標， 始点y座標，終点x座標， 終点y座標)
@@ -223,40 +175,78 @@ namespace procon30UI
                 g.DrawLine(Pens.Black, mass_basic, i * mass_wid + mass_basic, mass_wid * width + mass_basic, i * mass_wid + mass_basic);// x軸方向の線 
             }
 
-            for (int i = 0; i < height; i++)
+            if (turn > 0)
             {
-                for (int j = 0; j < width; j++)
+                //履歴の入力
+                label12.Text = string.Format("行動履歴");
+                label13.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", fieldInfo.Actions[0], agentID, "move", 1, 1, 1, 1);
+                label14.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label15.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label16.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label17.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label18.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label19.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label20.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label21.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label22.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label23.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label24.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label25.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label26.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label27.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label28.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+
+                //移動後のマスに色を付ける
+                foreach (UI.Structure.FieldJson.Action action in fieldInfo.Actions)
                 {
-                    if (tiled[i, j] == teamID)
+                    foreach(UI.Structure.FieldJson.Team.Agent agent in fieldInfo.Teams[0].Agents)
                     {
-                        Rectangle rect = new Rectangle(j * mass_wid + mass_basic + 1, i * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
-                        Graphics a = CreateGraphics();
-                        g.FillRectangle(Brushes.HotPink, rect);
-                    }
+                        if (action.AgentID == agent.AgentID)
+                        {
+                            if (fieldInfo.Teams[0].TeamID == 1)//TODO あとで変更の可能性あり
+                            {
+                                Rectangle rect = new Rectangle((agent.X + action.Dx -1) * mass_wid + mass_basic + 1, (agent.Y + action.Dy -1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
+                                Graphics a = CreateGraphics();
+                                g.FillRectangle(Brushes.HotPink, rect);
+                            }
 
-                    if (tiled[i, j] == enemyTeamID)
-                    {
-                        Rectangle rect = new Rectangle(j * mass_wid + mass_basic + 1, i * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
-                        Graphics a = CreateGraphics();
-                        g.FillRectangle(Brushes.CornflowerBlue, rect);
-                    }
+                            else
+                            {
+                                Rectangle rect = new Rectangle((agent.X + action.Dx - 1) * mass_wid + mass_basic + 1, (agent.Y + action.Dy - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
+                                Graphics a = CreateGraphics();
+                                g.FillRectangle(Brushes.CornflowerBlue, rect);
+                            }
 
-                    if (teams[i, j] == agentID)
-                    {
-                        Rectangle rect = new Rectangle(j * mass_wid + mass_basic + 1, i * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
-                        Graphics a = CreateGraphics();
-                        g.FillRectangle(Brushes.DeepPink, rect);
-                    }
-
-                    if (teams[i, j] == enemyagentID)
-                    {
-                        Rectangle rect = new Rectangle(j * mass_wid + mass_basic + 1, i * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
-                        Graphics a = CreateGraphics();
-                        g.FillRectangle(Brushes.RoyalBlue, rect);
+                            break;
+                        }
                     }
                 }
             }
 
+            //agentの場所に色を付ける
+            foreach (UI.Structure.FieldJson.Team team in fieldInfo.Teams)
+            {
+                Brush brush;
+                if (team.TeamID == 1)//TODO あとで変更の可能性あり
+                {
+                    brush = Brushes.DeepPink;
+                }
+                else
+                {
+                    brush = Brushes.RoyalBlue;
+                }
+
+                foreach (UI.Structure.FieldJson.Team.Agent agent in team.Agents)
+                {
+                    Rectangle rect = new Rectangle((agent.X - 1) * mass_wid + mass_basic + 1, (agent.Y - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
+                    Graphics a = CreateGraphics();
+                    g.FillRectangle(brush, rect);
+                }
+            }
+
+
+
+            
             //点数をフィールドに入れる
             for (int i = 0; i < height; i++)
             {
