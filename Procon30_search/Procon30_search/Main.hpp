@@ -16,3 +16,11 @@ inline std::vector<std::string> SplitLine(const std::string& str, char delim)
 
 	return splited;
 }
+
+inline std::string EnumToString(Behaviour::Action act) {
+	std::string str;
+	if (act == Behaviour::Action::move) { str = "move"; }
+	else if (act == Behaviour::Action::remove) { str = "remove"; }
+	else { str = "stay"; }
+	return str;
+}
