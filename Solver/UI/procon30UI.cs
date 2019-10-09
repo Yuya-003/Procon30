@@ -17,7 +17,7 @@ namespace procon30UI
     {
         const int Width_length = 1500;//フォームの幅
         const int Height_length = 1000;//フォーㇺの高さ
-        const int mass_wid = 33;//マスの幅
+        const int mass_wid = 35;//マスの幅
         int mass_basic = mass_wid * 4;//空白スペース
         bool GetAPIFlag = true;
         bool GetSeachFlag = true;
@@ -40,12 +40,13 @@ namespace procon30UI
         int agentID = 0;
         int enemyagentID = 0;
         int time = 0;
+        int remainingturn;
         int turn = 0;//ターン数
 
         //APIから取得
         int matchID;
         int enemyTeamName;
-        int teamID = 0;//jsonからも取得可能？？
+        int teamID = 0;//agentがてきかみかたかを判別する
         int totalTurn = 10;//試合ごとに変わるその試合の総ターン
         int oneTurnInterval = 0; //試合の1ターンあたりの時間(ms) つかわんくねこれ？
         int turnInterval = 10;//試合のターンとターンの間の時間(ms)
@@ -61,7 +62,6 @@ namespace procon30UI
         {
             InitializeComponent();
             fieldInfo = UI.Structure.FieldJson.LoadFromJsonFile("C:\\Users\\Pepper\\Documents\\procon30_json\\F-2.json");
-
             //jsonからの代入
             width = fieldInfo.Width;
             height = fieldInfo.Height;
@@ -85,8 +85,12 @@ namespace procon30UI
 
             points = fieldInfo.Points;
             tiled = fieldInfo.Tiled;
-            teams = new int[height,width];
-
+            teams = new int[height, width];
+             
+            remainingturn = totalTurn - turn;
+            label9.Text = string.Format("総ターン    {0}ターン", totalTurn);
+            label8.Text = string.Format("残り         {0}ターン", remainingturn.ToString());
+            label10.Text = string.Format("{0}秒以内に送信", turnInterval);
             for (int i = 0; i < fieldInfo.Teams[0].Agents.Length; i++)//teamsの代入
             {
                 teams[fieldInfo.Teams[0].Agents[i].X - 1, fieldInfo.Teams[0].Agents[i].Y - 1] = fieldInfo.Teams[0].Agents[i].AgentID;
@@ -116,10 +120,10 @@ namespace procon30UI
 
             try
             {
-                int remainingturn = totalTurn - turn;
-                label9.Text = string.Format("総ターン    {0}ターン", totalTurn);
-                label8.Text = string.Format("残り         {0}ターン", remainingturn.ToString());
-                label10.Text = string.Format("{0}秒以内に送信", turnInterval);
+                //int remainingturn = totalTurn - turn;
+                //label9.Text = string.Format("総ターン    {0}ターン", totalTurn);
+                //label8.Text = string.Format("残り         {0}ターン", remainingturn.ToString());
+                //label10.Text = string.Format("{0}秒以内に送信", turnInterval);
 
 
 
@@ -157,7 +161,7 @@ namespace procon30UI
             {
                 //履歴の入力
                 label12.Text = string.Format("行動履歴");
-                label13.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", fieldInfo.Actions[0], agentID, "move", 1, 1, 1, 1);
+                label13.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
                 label14.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
                 label15.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
                 label16.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
@@ -173,30 +177,32 @@ namespace procon30UI
                 label26.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
                 label27.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
                 label28.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-
                 //移動後のマスに色を付ける
+
                 foreach (UI.Structure.FieldJson.Action action in fieldInfo.Actions)
                 {
-                    foreach(UI.Structure.FieldJson.Team.Agent agent in fieldInfo.Teams[0].Agents)
+                    foreach (UI.Structure.FieldJson.Team team in fieldInfo.Teams)
                     {
-                        if (!action.Apply.Equals("move")) break;
-                        if (action.AgentID == agent.AgentID)
+                        foreach (UI.Structure.FieldJson.Team.Agent agent in team.Agents)
                         {
-                            if (fieldInfo.Teams[0].TeamID == 1)//TODO あとで変更の可能性あり
+                            if (!action.Type.Equals("move")) break;
+                            if (action.AgentID == agent.AgentID)
                             {
-                                Rectangle rect = new Rectangle((agent.X + action.Dx -1) * mass_wid + mass_basic + 1, (agent.Y + action.Dy -1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
-                                Graphics a = CreateGraphics();
-                                g.FillRectangle(Brushes.HotPink, rect);
-                            }
+                                if (team.TeamID == 1)//TODO あとで変更の可能性あり TeamIDが1で味方
+                                {
+                                    Rectangle rect = new Rectangle((agent.X - action.Dx - 1) * mass_wid + mass_basic + 1, (agent.Y - action.Dy - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
+                                    Graphics a = CreateGraphics();
+                                    g.FillRectangle(Brushes.HotPink, rect);
+                                }
 
-                            else
-                            {
-                                Rectangle rect = new Rectangle((agent.X + action.Dx - 1) * mass_wid + mass_basic + 1, (agent.Y + action.Dy - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
-                                Graphics a = CreateGraphics();
-                                g.FillRectangle(Brushes.CornflowerBlue, rect);
+                                else//敵
+                                {
+                                    Rectangle rect = new Rectangle((agent.X - action.Dx - 1) * mass_wid + mass_basic + 1, (agent.Y - action.Dy - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
+                                    Graphics a = CreateGraphics();
+                                    g.FillRectangle(Brushes.CornflowerBlue, rect);
+                                }
+                                break;
                             }
-
-                            break;
                         }
                     }
                 }
@@ -264,6 +270,8 @@ namespace procon30UI
             //周りが自分のタイルか否か？
             //↓
             //周りで最も点数が高いものはどれか？
+            //↓
+            //自分のagentと競合しないように
             // }
         }
 
