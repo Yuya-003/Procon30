@@ -9,72 +9,72 @@ namespace UI.Structure
         {
             public class Agent
             {
-                [JsonProperty("agentID")]
+                [JsonProperty("agentID")]  //エージェントID
                 public int AgentID { get; set; }
 
-                [JsonProperty("x")]
+                [JsonProperty("x")]  //x座標
                 public int X { get; set; }
 
-                [JsonProperty("y")]
+                [JsonProperty("y")]  //y座標
                 public int Y { get; set; }
             }
 
-            [JsonProperty("teamID")]
+            [JsonProperty("teamID")]  //チームID
             public int TeamID { get; set; }
 
-            [JsonProperty("tilePoint")]
+            [JsonProperty("tilePoint")]  //タイルポイント
             public int TilePoint { get; set; }
 
-            [JsonProperty("areaPoint")]
+            [JsonProperty("areaPoint")]  //領域ポイント
             public int AreaPoint { get; set; }
 
-            [JsonProperty("agents")]
+            [JsonProperty("agents")]  //各エージェント状況
             public Agent[] Agents { get; set; }
         }
 
         public class Action
         {
-            [JsonProperty("agentID")]
+            [JsonProperty("agentID")]  //エージェントID
             public int AgentID { get; set; }
 
-            [JsonProperty("type")]
+            [JsonProperty("type")]  //行動の種類
             public string Type { get; set; }
 
-            [JsonProperty("dx")]
+            [JsonProperty("dx")]  //行動のx方向の向き
             public int Dx { get; set; }
 
-            [JsonProperty("dy")]
+            [JsonProperty("dy")]  //行動のy方向の向き
             public int Dy { get; set; }
 
-            [JsonProperty("turn")]
+            [JsonProperty("turn")]  //行動ターン
             public int Turn { get; set; }
 
-            [JsonProperty("apply")]
+            [JsonProperty("apply")]  //行動の適応状況
             public int Apply { get; set; }
         }
 
-        [JsonProperty("width")]
+        [JsonProperty("width")]  //フィールド横幅
         public int Width { get; set; }
 
-        [JsonProperty("height")]
+        [JsonProperty("height")]  //フィールド縦幅
         public int Height { get; set; }
 
-        [JsonProperty("points")]
+        [JsonProperty("points")]  //各マスの点数
         public int[][] Points { get; set; }
 
-        [JsonProperty("startedAtUnixTime")]
+        [JsonProperty("startedAtUnixTime")]  //試合が始まったUnix時間
         public int StartedAtUnixTime { get; set; }
 
-        [JsonProperty("turn")]
+        [JsonProperty("turn")]  //ターン
         public int Turn { get; set; }
 
-        [JsonProperty("tiled")]
+        [JsonProperty("tiled")]  //タイル配置状況
         public int[][] Tiled { get; set; }
 
-        [JsonProperty("teams")]
+        [JsonProperty("teams")]  //各チーム状況
         public Team[] Teams { get; set; }
 
-        [JsonProperty("actions")]
+        [JsonProperty("actions")]  //各行動履歴
         public Action[] Actions { get; set; }
 
         public FieldJson(){}
