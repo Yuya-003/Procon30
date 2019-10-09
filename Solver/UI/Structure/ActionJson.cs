@@ -5,16 +5,16 @@ namespace UI.Structure
 {
     public class ActionJson
     {
-        [JsonProperty("agentID")]
+        [JsonProperty("agentID")]  //エージェントID
         public int AgentID { get; set; }
 
-        [JsonProperty("type")]
+        [JsonProperty("type")]  //行動の種類
         public string Type { get; set; }
 
-        [JsonProperty("dx")]
+        [JsonProperty("dx")]  //行動のx方向の向き
         public int Dx { get; set; }
 
-        [JsonProperty("dy")]
+        [JsonProperty("dy")]  //行動のy方向の向き
         public int Dy { get; set; }
 
         public ActionJson(){}
