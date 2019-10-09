@@ -82,17 +82,24 @@ std::vector<Behaviour> BasicSearch::Search(FieldInfo field, Player player) {
 		closedList[x][y] = 1;
 
 		if ((x == goal.pos.x || fabs(x - goal.pos.x) == 1) && (y == goal.pos.y || fabs(y - goal.pos.y) == 1)) {
-			int i = 0;
-			for (size_t i = 0; i < 3; i++) {
+			std::vector<Behaviour> behavList;
+			size_t i = 0;
+
+			while (!(x == startPos.x && y == startPos.y)) {
 				int j = dirMap[x][y];
 				int route = route = Conversion((j + dir / 2) % 2);
 
-				behaviour[i] = Behaviour(Behaviour::Action::move, static_cast<Behaviour::Dir>(route));
+				behavList.push_back(Behaviour(Behaviour::Action::move, static_cast<Behaviour::Dir>(route)));
+				if (field.field[x][y].status == Cell::Status::enemy) { behavList[i].action = Behaviour::Action::remove; }
 
 				x += dx[j];
 				y += dy[j];
 
 				if (i == dirMap.size()) { break; }
+			}
+
+			for (i = 0; i < 3; i++) {
+				behaviour[i] = behavList[behavList.size() - (i + 1)];
 			}
 
 			while (!nodes[index].empty()) nodes[index].pop();
