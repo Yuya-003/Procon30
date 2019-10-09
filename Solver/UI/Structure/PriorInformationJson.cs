@@ -22,7 +22,9 @@ namespace UI.Structure
 
         [JsonProperty("turns")]  //試合のターン数
         public int Turns { get; set; }
-        
+
+        public PriorInformationJson(){}
+
         public PriorInformationJson(string str)
         {
             var PriorInfo = JsonConvert.DeserializeObject<PriorInformationJson>(str);
