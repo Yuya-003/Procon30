@@ -17,7 +17,7 @@ namespace procon30UI
     {
         const int Width_length = 1500;//フォームの幅
         const int Height_length = 1000;//フォーㇺの高さ
-        const int mass_wid = 35;//マスの幅
+        const int mass_wid = 33;//マスの幅
         int mass_basic = mass_wid * 4;//空白スペース
         bool GetAPIFlag = true;
         bool GetSeachFlag = true;
@@ -61,7 +61,7 @@ namespace procon30UI
         public Form1()
         {
             InitializeComponent();
-            fieldInfo = UI.Structure.FieldJson.LoadFromJsonFile("C:\\Users\\Pepper\\Documents\\procon30_json\\F-2.json");
+            fieldInfo = UI.Structure.FieldJson.LoadFromJsonFile("C:\\Users\\Pepper\\Documents\\procon30_json\\F-2turn2.json");
             //jsonからの代入
             width = fieldInfo.Width;
             height = fieldInfo.Height;
@@ -73,6 +73,8 @@ namespace procon30UI
             areaPoint = fieldInfo.Teams[0].AreaPoint;
             enemyTilePoint = fieldInfo.Teams[1].TilePoint;
             areaPoint = fieldInfo.Teams[1].AreaPoint;
+
+
 
             label1.Text = string.Format("縦 {0}マス", height);
             label2.Text = string.Format("横 {0}マス", width);
@@ -86,7 +88,7 @@ namespace procon30UI
             points = fieldInfo.Points;
             tiled = fieldInfo.Tiled;
             teams = new int[height, width];
-             
+
             remainingturn = totalTurn - turn;
             label9.Text = string.Format("総ターン    {0}ターン", totalTurn);
             label8.Text = string.Format("残り         {0}ターン", remainingturn.ToString());
@@ -120,13 +122,6 @@ namespace procon30UI
 
             try
             {
-                //int remainingturn = totalTurn - turn;
-                //label9.Text = string.Format("総ターン    {0}ターン", totalTurn);
-                //label8.Text = string.Format("残り         {0}ターン", remainingturn.ToString());
-                //label10.Text = string.Format("{0}秒以内に送信", turnInterval);
-
-
-
                 if (turnInterval - 3 == time)
                 {
                     //一番点数の高いところにいくやつをここに書く
@@ -161,52 +156,64 @@ namespace procon30UI
             {
                 //履歴の入力
                 label12.Text = string.Format("行動履歴");
-                label13.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label14.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label15.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label16.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label17.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label18.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label19.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label20.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label21.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label22.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label23.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label24.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label25.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label26.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label27.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                label28.Text = string.Format("agentID : {0} Type : {1} dx : {2} dy : {3} Turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
-                //移動後のマスに色を付ける
+                label13.Text = string.Format("agentID : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label14.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label15.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label16.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label17.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label18.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label19.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label20.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label21.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label22.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label23.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label24.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label25.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label26.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label27.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
+                label28.Text = string.Format("agentid : {0} type : {1} dx : {2} dy : {3} turn : {4} apply : {5}", 1, "move", 1, 1, 1, 1);
 
+                //移動後のマスに色を付ける
                 foreach (UI.Structure.FieldJson.Action action in fieldInfo.Actions)
                 {
                     foreach (UI.Structure.FieldJson.Team team in fieldInfo.Teams)
                     {
                         foreach (UI.Structure.FieldJson.Team.Agent agent in team.Agents)
                         {
-                            if (!action.Type.Equals("move")) break;
                             if (action.AgentID == agent.AgentID)
                             {
-                                if (team.TeamID == 1)//TODO あとで変更の可能性あり TeamIDが1で味方
+                                if (action.Type.Equals("move"))
                                 {
-                                    Rectangle rect = new Rectangle((agent.X - action.Dx - 1) * mass_wid + mass_basic + 1, (agent.Y - action.Dy - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
-                                    Graphics a = CreateGraphics();
-                                    g.FillRectangle(Brushes.HotPink, rect);
+                                    if (team.TeamID == 1)//TODO あとで変更の可能性あり TeamIDが1で味方
+                                    {
+                                        Rectangle rect = new Rectangle((agent.X - action.Dx - 1) * mass_wid + mass_basic + 1, (agent.Y - action.Dy - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
+                                        Graphics a = CreateGraphics();
+                                        g.FillRectangle(Brushes.HotPink, rect);
+                                    }
+
+                                    else//敵
+                                    {
+                                        Rectangle rect = new Rectangle((agent.X - action.Dx - 1) * mass_wid + mass_basic + 1, (agent.Y - action.Dy - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
+                                        Graphics a = CreateGraphics();
+                                        g.FillRectangle(Brushes.CornflowerBlue, rect);
+                                    }
                                 }
 
-                                else//敵
+                                else if (action.Type.Equals("remove"))
                                 {
                                     Rectangle rect = new Rectangle((agent.X - action.Dx - 1) * mass_wid + mass_basic + 1, (agent.Y - action.Dy - 1) * mass_wid + mass_basic + 1, mass_wid - 1, mass_wid - 1);
                                     Graphics a = CreateGraphics();
-                                    g.FillRectangle(Brushes.CornflowerBlue, rect);
+                                    g.FillRectangle(Brushes.Silver, rect);
                                 }
-                                break;
                             }
                         }
                     }
                 }
             }
+
+            // if (action.Type.Equals("remove"))
+
+
 
             //agentの場所に色を付ける
             foreach (UI.Structure.FieldJson.Team team in fieldInfo.Teams)
@@ -235,8 +242,8 @@ namespace procon30UI
                 for (int j = 0; j < width; j++)
                 {
                     Graphics a = e.Graphics;
-                    Font ft = new Font("MS Serif", 15);
-                    PointF pt = new PointF(j * mass_wid + mass_basic + 2, i * mass_wid + mass_basic + 6);
+                    Font ft = new Font("MS Serif", 14);
+                    PointF pt = new PointF(j * mass_wid + mass_basic + 3, i * mass_wid + mass_basic + 6);
                     a.DrawString(points[i][j].ToString(), ft, Brushes.Black, pt);
                 }
             }
@@ -281,7 +288,7 @@ namespace procon30UI
             //探索の開始
             System.Diagnostics.Process p = System.Diagnostics.Process.Start("notepad.exe");//探索.exe
             /*
-            while()//探索の終了待ち
+            while(GetSearchFlag==true)//探索の終了待ち
             {
                 if()//時間のチェック過ぎれば周りで最もポイントの高い方へ
                 {
@@ -304,7 +311,7 @@ namespace procon30UI
         {
             //事前情報取得するまでwhileを回すかんじ
             /*
-            while (GetAPIFlag)
+            while (GetAPIFlag==true)
             {
                 if (事前情報が入ったら)
                 {
